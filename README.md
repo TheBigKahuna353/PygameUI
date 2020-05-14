@@ -5,11 +5,11 @@ Currently have button and textbox
 
 - Button
 
-Create a button with 'UI.Button()'
+Create a button with `UI.Button()`
 
 All paramters are optional except x and y location but you need to rather call 'UI.createWindow()' or send the window surface as the surface argument
 
-Arguments for Button(x,y,w= 0,h=0,text="",background = (255,255,255),font = "Calibri", font_size = 30, text_colour = (0,0,0), outline = False, outline_amount = 2, half_outline = False, offset = [0,0],action = None, action_arg = None, surface = None, image = None, enlarge = False, enlarge_amount = 1.1)
+Arguments for `Button(x,y,w= 0,h=0,text="",background = (255,255,255),font = "Calibri", font_size = 30, text_colour = (0,0,0), outline = False, outline_amount = 2, half_outline = False, offset = [0,0],action = None, action_arg = None, surface = None, image = None, enlarge = False, enlarge_amount = 1.1)`
 
 - x - x location of the button
 - y - y location of the button
@@ -31,3 +31,39 @@ Arguments for Button(x,y,w= 0,h=0,text="",background = (255,255,255),font = "Cal
 - enlarge = False - When enlarge is set to True, it will enlarge the image when the mouse is over the button, only when image is supplied
 - enlarge_amount = 1.1 - the amount to enlarge by 
 
+To update the button, you can use `button.update(mouse_position,click)`
+
+- mouse_position - this is the position of the mouse, this can be `pygame.mouse.get_pos()` or `event.pos` in `for event in pygame.event.get()`
+
+this method draws the button and calculates if the mouse has clicked the button
+
+- TextBox
+
+***<strong>Work in Progress<strong>***
+  
+Create a Inputbox with `UI.TextBox()`
+
+arguments for `TextBox(x = 0, y = 0, w = 0, h = 0, text = "", background = False, font_size = 30, font = "Calibri", text_colour = (0,0,0))`
+
+- x = 0 - x position of the textBox
+- y = 0 - y position of the textBox
+- w = 0 - width of the textbox
+- h = 0 - height of the textbox
+- text = "" - starting text for textbox
+- background = False - background color
+- font_size = 30 - font size of the text
+- font = "Calibri" - font of the text
+text_colour = (0,0,0) - text color
+
+methods for textbox
+
+- Add_char(key)
+key is ascii number of key
+can be `pygame.keys.get()`
+adds the key to the text, if the key is backspace, the last char is deleted
+
+- Get_obj()
+draws the background if there is one, and returns surface of the text
+
+- Get_pos()
+return position as (x,y)
