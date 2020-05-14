@@ -39,7 +39,7 @@ this method draws the button and calculates if the mouse has clicked the button
 
 - TextBox
 
-***<strong>Work in Progress<strong>***
+***Work in Progress***
   
 Create a Inputbox with `UI.TextBox()`
 
