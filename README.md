@@ -7,7 +7,7 @@ Currently have button and textbox
 
 Create a button with `UI.Button()`
 
-All paramters are optional except x and y location but you need to rather call 'UI.createWindow()' or send the window surface as the surface argument
+All paramters are optional except x and y location
 
 
 Arguments for `Button(x,y,w= 0,h=0,text="", calculateSize = False,background = (255,255,255),font = "Calibri", font_size = 30, text_colour = (0,0,0), outline = False, outline_amount = 2, half_outline = False,action = None, action_arg = None, surface = None, image = None, enlarge = False, enlarge_amount = 1.1)`
@@ -28,7 +28,7 @@ Arguments for `Button(x,y,w= 0,h=0,text="", calculateSize = False,background = (
 - half_outline = False - when set to True, it will outline 2 sides of the button instead of all 4 in outline
 - action = None - function that gets called when button clicked
 - action_arg = None - argument for action function
-- surface = None - surface the button gets blit to
+- surface = None - surface the button gets blit to, if left as None, it will use the window surface
 - image = None - surface will be the button, using this means there can be no text, or outline
 - enlarge = False - When enlarge is set to True, it will enlarge the image when the mouse is over the button, only when image is supplied
 - enlarge_amount = 1.1 - the amount to enlarge by 
