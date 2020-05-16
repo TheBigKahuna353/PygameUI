@@ -108,32 +108,96 @@ class Button:
 
 
 
+#class textbox
 class TextBox:
     
-    def __init__(self,x = 0, y = 0, w = 0, h = 0, text = "", background = False, font_size = 30, font = "Calibri", text_colour = (0,0,0)):
+    def __init__(self,x, y, w, h = 0,lines = 1, text = "", background = None, font_size = 30, font = "Calibri", text_colour = (0,0,0), surface = None, margin = 2, cursor = True,Enter_action = None):
         self.x = x
         self.y = y
         self.w = w
         self.h = h
-        self.text_colour = text_colour
-        self.text = text
-        self.background = background
+        self.cursor = cursor
+        self.current_line = 0
+        self.current_col = len(text)
+        self.lines = lines
         self.font = pygame.font.Font(pygame.font.match_font(font),font_size)
+        self.text_colour = text_colour
+        self.text = [list(text)]
+        self.char_length = [self._get_text_width(x) for x in self.text]
+        self.background = background
+        self.surface= surface
+        self.margin = margin
+        self.Enter_action = Enter_action
+        #if no surface is supplied, get window
+        if self.surface == None:
+            self.surface = pygame.display.get_surface()
+            if self.surface == None:
+                raise ValueError("No surface to blit to")
     
-    def Add_char(self,key):
-        if key == 8:
-            self.text = self.text[:-1]
-        else:
-            char = pygame.key.name(key)
-            self.text += char
+    #get the width of the text using the font
+    def _get_text_width(self,text):
+        text = "".join(text)
+        if len(text) == 0:
+            return 0
+        obj = self.font.render(text,True,(0,0,0))
+        return obj.get_width()
     
-    def Get_obj(self):
+    #call this when the user presses a key down, supply the event from `pygame.event.get()`
+    def key_down(self,e):
+        #when backspace is pressed, delete last char
+        if e.unicode == "":
+            #if nothing in line, delete line
+            if len(self.text[self.current_line]) == 0:
+                if self.current_line > 0:
+                    del self.text[self.current_line]
+                    self.current_line -= 1
+                    self.current_col = self.char_length[self.current_line][-1]
+            else:   
+                del self.text[self.current_line][-1]
+                self.current_col -= 1
+        #if key is enter, create line
+        elif e.key == 13:
+            if self.Enter_action:
+                self.Enter_action()
+            elif self.current_line < self.lines - 1:
+                self.current_line += 1
+                self.text.append([""])
+                self.char_length.append([0])
+                self.current_col = 0
+        #if key is a charachter, put on screen
+        elif e.unicode != "":
+            self.text[self.current_line] = self.text[self.current_line][:self.current_col] + [e.unicode] + self.text[self.current_line][self.current_col:]
+            self.current_col += 1
+        #if the down arrow is pressed
+        elif e.key == 274:
+            self.current_line += 1 if self.current_line < len(self.text)-1 else 0
+            self.current_col = min(self.current_col, len(self.text[self.current_line]))
+        #if the up arrow is pressed
+        elif e.key == 273:
+            self.current_line -= 1 if self.current_line > 0 else 0
+            self.current_col = min(self.current_col, len(self.text[self.current_line]))
+        #if the right arrow is pressed
+        elif e.key == 275:
+            self.current_col += 1 if len(self.text[self.current_line]) - 1 > self.current_col else 0
+        #if the left arrow is pressed
+        elif e.key == 276:
+            self.current_col -= 1 if 0 < self.current_col else 0
+    
+    #draw the textbox
+    def draw(self):
+        #draw background
         if self.background:
-            pygame.draw.rect(screen, self.background, (x,y,w,h))
-        obj = self.font.render(self.text,True,self.text_colour)
-        return obj
-    
-    def Get_pos(self):
-        return (self.x,self.y)
-
-
+            pygame.draw.rect(self.surface, self.background, (self.x,self.y,self.w,self.h*self.lines))
+        #draw all text
+        for line,text in enumerate(self.text):
+            if len(text) != 0:
+                txt = "".join(text)
+                obj = self.font.render(txt,True,self.text_colour)
+                self.surface.blit(obj,(self.x + self.margin,self.y +(self.h*line)))
+        #draw cursor
+        if self.cursor:
+            total = 0
+            total = self._get_text_width(self.text[self.current_line][:self.current_col])
+            pygame.draw.line(self.surface,(0,0,0),(self.x + total,self.y +(self.h*self.current_line)),
+                                     (self.x + total,self.y + (self.h*(self.current_line+1))),2)
+        
