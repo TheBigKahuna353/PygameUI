@@ -9,7 +9,9 @@ Create a button with `UI.Button()`
 
 All paramters are optional except x and y location but you need to rather call 'UI.createWindow()' or send the window surface as the surface argument
 
+
 Arguments for `Button(x,y,w= 0,h=0,text="",background = (255,255,255),font = "Calibri", font_size = 30, text_colour = (0,0,0), outline = False, outline_amount = 2, half_outline = False, offset = [0,0],action = None, action_arg = None, surface = None, image = None, enlarge = False, enlarge_amount = 1.1)`
+
 
 - x - x location of the button
 - y - y location of the button
@@ -33,8 +35,6 @@ Arguments for `Button(x,y,w= 0,h=0,text="",background = (255,255,255),font = "Ca
 
 To update the button, you can use `button.update(mouse_position,click)`
 
-- mouse_position - this is the position of the mouse, this can be `pygame.mouse.get_pos()` or `event.pos` in `for event in pygame.event.get()`
-
 this method draws the button and calculates if the mouse has clicked the button
 
 - TextBox
@@ -42,6 +42,7 @@ this method draws the button and calculates if the mouse has clicked the button
 ***Work in Progress***
   
 Create a Inputbox with `UI.TextBox()`
+
 
 arguments for `TextBox(x = 0, y = 0, w = 0, h = 0, text = "", background = False, font_size = 30, font = "Calibri", text_colour = (0,0,0))`
 
