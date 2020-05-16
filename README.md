@@ -40,33 +40,37 @@ this method draws the button and calculates if the mouse has clicked the button
 return True if the user clicked on the button, If the mouse is held down on the button, only return True first frame
 
 - TextBox
-
-***Work in Progress***
   
 Create a Inputbox with `UI.TextBox()`
 
 
-arguments for `TextBox(x = 0, y = 0, w = 0, h = 0, text = "", background = False, font_size = 30, font = "Calibri", text_colour = (0,0,0))`
+arguments for `TextBox(self,x, y, w, h = 0,lines = 1, text = "", background = None, font_size = 30, font = "Calibri", text_colour = (0,0,0), surface = None, margin = 2, cursor = True,Enter_action = None)`
+
+all optional except x,y, width and height, it syas height it optional but if you want background, you need to supply height
 
 - x = 0 - x position of the textBox
 - y = 0 - y position of the textBox
 - w = 0 - width of the textbox
 - h = 0 - height of the textbox
+- lines = 1 - amount of lines the textbox has/can type in
 - text = "" - starting text for textbox
 - background = False - background color
 - font_size = 30 - font size of the text
 - font = "Calibri" - font of the text
-text_colour = (0,0,0) - text color
+- text_colour = (0,0,0) - text color
+- surface = None - the surface to blit to, if None is supplied, it will blit to window
+- margin = 2 - the distance from when the letters start from the side of the textbox
+- cursor = True - show a cursor
+- Enter_action = None - a function that gets called when enter is pressed, no matter if there is more lines to write on
 
 methods for textbox
 
-- Add_char(key)
-key is ascii number of key
-can be `pygame.keys.get()`
-adds the key to the text, if the key is backspace, the last char is deleted
+- key_down(event)
+event is a pygame.event()
+best way to do this is 
+`for event in pygame.event.get()`
+`    if e.type == pygame.KEYDOWN:`
+`        textbox.key_down(event)`
 
-- Get_obj()
-draws the background if there is one, and returns surface of the text
-
-- Get_pos()
-return position as (x,y)
+- draw()
+draws the textbox
