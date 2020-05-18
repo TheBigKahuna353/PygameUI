@@ -12,7 +12,7 @@ def Window(w = 500, h = 500):
 
 #button class
 class Button:
-    def __init__(self,x,y,w= 0,h=0, calculateSize = False,text="",background = (255,255,255),font = "Calibri", font_size = 30, font_colour = (0,0,0), outline = False, outline_amount = 2, half_outline = False,action = None, action_arg = None, surface = None, image = None, enlarge = False, enlarge_amount = 1.1):
+    def __init__(self,x,y,w= 0,h=0, calculateSize = False,text="",background = (255,255,255),font = "Calibri", font_size = 30, font_colour = (0,0,0), outline = False, outline_amount = 2, half_outline = False,action = None, action_arg = None, surface = None, image = None, enlarge = False, enlarge_amount = 1.1, hover_image = None):
         self.x = x
         self.y = y
         self.w = w
@@ -32,6 +32,7 @@ class Button:
         self.half_outline = half_outline
         self.action = action
         self.image = image
+        self.hover_image = hover_image
         self.enlarge = enlarge
         self.enlarge_amount = enlarge_amount
         self.action_arg = action_arg
@@ -47,12 +48,44 @@ class Button:
                     self.caclulate_size()
                 else:
                     raise ValueError("cannot calculate width and height without text")
-    
+        self.Generate_images()
+     
+    def Generate_images(self):     
+        #generate images
+        if self.image == None:
+            self.image = pygame.Surface((self.w,self.h))
+            self.hover_image = pygame.Surface((self.w,self.h))
+            self.image.fill(self.background)
+            if self.outline:
+                ow = self.outline_amount * 2
+                pygame.draw.rect(self.hover_image,self.background,(self.outline_amount,self.outline_amount,self.w-ow,self.h - ow))
+            elif self.half_outline:
+                pygame.draw.rect(self.hover_image,self.background,(0,0, self.w-self.outline_amount,self.h-self.outline_amount))
+            txt = self.font.render(self.text,True,self.text_colour)
+            self.image.blit(txt,((self.w - txt.get_width())//2, (self.h - txt.get_height())//2))
+            self.hover_image.blit(txt,((self.w - txt.get_width())//2, (self.h - txt.get_height())//2))
+        elif self.hover_image == None:
+            if self.enlarge:
+                size = (int(self.w * self.enlarge_amount), int(self.h * self.enlarge_amount))
+                self.dx, self.dy = size[0] - self.w, size[1] - self.h
+                self.hover_image = pygame.transform.scale(self.image,size)        
+        
+            
     #if no width or height is given, calculate it with length of text
     def caclulate_size(self):
         txt = self.font.render(self.text,False,(0,0,0))
         self.w = txt.get_width() + self.w
         self.h = txt.get_height() + self.h
+    
+    def get_rect(self):
+        return pygame.Rect(self.x,self.y,self.w,self.h)
+    
+    def __str__(self):
+        if self.text:
+            return "Button: '" + self.text + "'"
+        else:
+            return "Button: at (" + str(self.x)  + ", " + str(self.y) + ")"  
+    
     
     #update the button, this should get called every frame
     def update(self):
@@ -74,38 +107,20 @@ class Button:
                             self.action()
         self.prev_clicked_state = click
         #draw
-        if self.image:
-            self.blit()
-        else:
-            self.draw()
+        self.draw()
         #return if the button was clicked on
         return returnee
     
-    #blit the button on the screen, used for images
-    def blit(self):
-        if self.hover:
-            size = (int(self.image.get_width() * self.enlarge_amount),int(self.image.get_height() * self.enlarge_amount))
-            img = pygame.transform.scale(self.image,(size))
-            loc = (self.x - (size[0] - self.image.get_width())//2,self.y - (size[1] - self.image.get_height())//2)
-        else:
-            img = self.image
-            loc = (self.x,self.y)
-        self.surface.blit(img,loc)
     
-    #draw the button, used for text
+    #draw the button
     def draw(self):
-        if (self.outline or self.half_outline) and self.hover:
-            pygame.draw.rect(self.surface,(0,0,0),(self.x,self.y,self.w,self.h))
-        if self.outline:
-            pygame.draw.rect(self.surface,self.background,(self.x+self.outline_amount,self.y+self.outline_amount,self.w-self.outline_amount * 2,self.h-self.outline_amount*2))
-        elif self.half_outline:
-            pygame.draw.rect(self.surface,self.background,(self.x+self.outline_amount,self.y+self.outline_amount,self.w-self.outline_amount,self.h-self.outline_amount))
+        if self.hover:
+            if self.enlarge:
+                self.surface.blit(self.hover_image,(self.x - self.dx//2,self.y - self.dy//2))
+            else:
+                self.surface.blit(self.hover_image,(self.x,self.y))
         else:
-            pygame.draw.rect(self.surface,self.background,(self.x,self.y,self.w,self.h))
-        
-        txt = self.font.render(self.text,True,self.text_colour)
-        self.surface.blit(txt,(self.x + (self.w - txt.get_width())//2, self.y + (self.h - txt.get_height())//2))
-
+            self.surface.blit(self.image,(self.x,self.y))
 
 
 #class textbox
