@@ -183,7 +183,7 @@ class TextBox:
                 if self.current_line > 0:
                     del self.text[self.current_line]
                     self.current_line -= 1
-                    self.current_col = self.char_length[self.current_line][-1]
+                    self.current_col = len(self.text[self.current_line])
             else:   
                 del self.text[self.current_line][-1]
                 self.current_col -= 1
@@ -198,6 +198,9 @@ class TextBox:
                 self.current_col = 0
         #if key is a charachter, put on screen
         elif e.unicode != "":
+            if len(self.text[self.current_line]) > 0:
+                if self.text[self.current_line][-1] == "":
+                    del self.text[self.current_line][-1]
             self.text[self.current_line] = self.text[self.current_line][:self.current_col] + [e.unicode] + self.text[self.current_line][self.current_col:]
             self.current_col += 1
         #if the down arrow is pressed
@@ -210,7 +213,7 @@ class TextBox:
             self.current_col = min(self.current_col, len(self.text[self.current_line]))
         #if the right arrow is pressed
         elif e.key == 275:
-            self.current_col += 1 if len(self.text[self.current_line]) - 1 > self.current_col else 0
+            self.current_col += 1 if len(self.text[self.current_line]) > self.current_col else 0
         #if the left arrow is pressed
         elif e.key == 276:
             self.current_col -= 1 if 0 < self.current_col else 0
@@ -232,5 +235,32 @@ class TextBox:
             total = self._get_text_width(self.text[self.current_line][:self.current_col])
             pygame.draw.line(self.surface,(0,0,0),(self.x + total,self.y +(self.h*self.current_line)),
                                      (self.x + total,self.y + (self.h*(self.current_line+1))),2)
-        
+            #print(self.current_col)
     
+    #get the text of a specific line or lines
+    def get_lines(self, lines= -1,return_as_string = False):
+        pas = False
+        if isinstance(lines,int):
+            if lines == -1:
+                lines = (0,self.lines)
+                pas = True
+            if not pas:
+                if 0 > lines or self.lines < lines:
+                    raise IndexError("line index not in range")
+                if len(self.text) < lines:
+                    return ""
+                return "".join(self.text[lines])
+        if isinstance(lines,tuple):
+            if lines[0] < 0 or lines[0] > self.lines or lines[1] < 0 or lines[1] > self.lines or lines[0] > lines[1]:
+                raise IndexError("line index is out of range: " + str(lines) + " (0, " + str(str(self.lines)))
+            string = []
+            for x in range(lines[0],lines[1]):
+                if len(self.text) > x:
+                    string.append("".join(self.text[x]))
+                else:
+                    string.append("")
+            if return_as_string:
+                return "\n".join(string)
+            return string
+                    
+

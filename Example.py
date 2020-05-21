@@ -50,6 +50,7 @@ button2 = UI.Button(
     hover_background_color = (255,0,0)
 )
 
+
 #create an image for our button
 button_img = pygame.Surface((30,30),pygame.SRCALPHA) #the pygame.SRCHALPHA makes it transparent
 pygame.draw.line(button_img,(0,0,0),(0,5),(30,5),3)
@@ -83,6 +84,8 @@ while running:
     for e in pygame.event.get():             # checks all events that happen
         if e.type == pygame.QUIT:
             running = False
+            pygame.quit()
         elif e.type == pygame.KEYDOWN:  #if a key is pressed, update the Textbox
             InputBox.key_down(e) #supply the event to the Textbox
+            print(InputBox.get_lines()) #print what is on the Inputbox
         
