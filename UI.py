@@ -69,6 +69,11 @@ class Button:
             self.hover_image.blit(txt,((self.w - txt.get_width())//2, (self.h - txt.get_height())//2))
         elif self.hover_image == None:
             self.hover_image = self.image.copy()
+            if self.outline:
+                pygame.draw.rect(self.hover_image,(0,0,0,255),(0,0,self.w,self.outline_amount))
+                pygame.draw.rect(self.hover_image,(0,0,0,255),(0,0,self.outline_amount,self.h))
+                pygame.draw.rect(self.hover_image,(0,0,0,255),(self.w,self.h,-self.w,-self.outline_amount))
+                pygame.draw.rect(self.hover_image,(0,0,0,255),(self.w,self.h,-self.outline_amount, -self.h))
         if self.enlarge:
             size = (int(self.w * self.enlarge_amount), int(self.h * self.enlarge_amount))
             self.dx, self.dy = size[0] - self.w, size[1] - self.h
@@ -97,7 +102,6 @@ class Button:
         if self.caclulateSize:
             self._caclulate_size()
         self._Generate_images()
-        print(self.image, text)
     
     
     #update the button, this should get called every frame
@@ -229,3 +233,4 @@ class TextBox:
             pygame.draw.line(self.surface,(0,0,0),(self.x + total,self.y +(self.h*self.current_line)),
                                      (self.x + total,self.y + (self.h*(self.current_line+1))),2)
         
+    
