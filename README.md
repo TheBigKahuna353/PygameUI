@@ -96,3 +96,18 @@ e.g.
     `get_lines(lines = (0,2))` gets the 1st and 2nd line
 
 The parameter `return_as_string` will return multiple lines as one string with `"\n"` representing a new line instead of a list
+
+# - CheckBox
+
+## Create a CheckBox with `CheckBox(x, y, w, [optional parameters])`
+
+### arguments for `CheckBox(x,y,w,checked=False,background=(255,255,255),outline=True,outline_amount=2,surface=None,check_width = 2)`
+- x - the x position of the checkbox
+- y - the y position of the checkbox
+- w - the width and height of the checkbox
+- checked = False - this is if the checkbox is checked or not, False by default
+- background = (0,0,0) - this is the background colour of the checkbox, white by default
+- outline = True - when True, creates a black border around the edge of the box
+- outline_amount = 2 - this is the thickness of the border, by default it is 2
+- surface = None - this is the surface to draw the checkbox on, if left as None, uses Window surface
+- check_width = 2 - the thickness of the x when the checkbox is checked
