@@ -45,7 +45,7 @@ return True if the user clicked on the button, If the mouse is held down on the 
 ### To change the text of the button, use `button.Update_text(text)`
 This method changes the text of the button and creates the surfaces for the button, if `calculateSize = True`, it will recalculate the width and height
 
-### `get_rect()`
+### You can get the rect of the Button with `button.get_rect()`
 This method returns a `pygame.Rect` object with the x, y, width and height of the button 
 
 # - TextBox
