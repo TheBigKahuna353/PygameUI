@@ -66,6 +66,9 @@ button_img = UI.Button(
 )
 
 
+checkBox = UI.CheckBox(300,100,30, background=(200,200,200))
+
+
 running = True
 # Game Loop
 while running:
@@ -78,7 +81,10 @@ while running:
         print("button2 clicked")
         
     button_img.update()
+    checkBox.update()
     
+    if checkBox:
+        print("checkBox = true")
     
     pygame.display.update()
     for e in pygame.event.get():             # checks all events that happen

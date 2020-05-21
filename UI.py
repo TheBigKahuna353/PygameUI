@@ -13,6 +13,13 @@ def Window(w = 500, h = 500):
     screen = pygame.display.set_mode((w,h))
     return screen
 
+def update_all():
+    for widget in _all_widgets:
+        widget.update()
+
+_all_widgets = []
+
+
 #button class
 class Button:
     def __init__(self,x,y,w= 0,h=0, calculateSize = False,text="",background = (255,255,255),font = "Calibri", font_size = 30, font_colour = (0,0,0), outline = False, outline_amount = 2, half_outline = False,action = None, action_arg = None, surface = None, image = None, enlarge = False, enlarge_amount = 1.1, hover_image = None, dont_generate = False, hover_background_color = None):
@@ -20,6 +27,7 @@ class Button:
         self.y = y
         self.w = w
         self.h = h
+        _all_widgets.append(self)
         self.surface = surface
         #if no surface is supplied, try getting 
         if self.surface == None:
@@ -151,6 +159,7 @@ class TextBox:
         self.y = y
         self.w = w
         self.h = h
+        _all_widgets.append(self)
         self.cursor = cursor
         self.current_line = 0
         self.current_col = len(text)
@@ -160,7 +169,9 @@ class TextBox:
         self.text = [list(text)]
         self.char_length = [self._get_text_width(x) for x in self.text]
         self.background = background
-        self.surface= surface
+        self.surface= surface if surface else pygame.display.get_surface()
+        if self.surface == None:
+            raise ValueError("No surface to blit to")        
         self.margin = margin
         self.Enter_action = Enter_action
         #if no surface is supplied, get window
@@ -266,4 +277,53 @@ class TextBox:
                 return "\n".join(string)
             return string
                     
-
+class CheckBox:
+    def __init__(self,x,y,w,checked=False,background=(255,255,255),outline=True,outline_amount=2,surface=None,check_width = 2):
+        self.x = x
+        self.y = y
+        self.w = w
+        _all_widgets.append(self)
+        self.checked = checked
+        self.backgound = background
+        self.outline = outline
+        self.outline_amount = outline_amount
+        self._prev_click = False
+        self.surface = surface if surface else pygame.display.get_surface()
+        self.check_width = check_width
+        if self.surface == None:
+            raise ValueError("No surface to blit to") 
+    
+    def __bool__(self):
+        return self.checked
+    
+    def __repr__(self):
+        return self.checked
+    
+    def __str__(self):
+        return "Checkbox at (" + str(self.x) + ", " + str(self.y) + "): " + str(self.checked)
+    
+    def update(self):
+        mouse = pygame.mouse.get_pos()
+        click = pygame.mouse.get_pressed()[0]
+        
+        if mouse[0] > self.x and mouse[0] < self.x + self.w:
+            if mouse[1] > self.y and mouse[1] < self.y + self.w:
+                if click:
+                    if not self._prev_click:
+                        self.checked = not self.checked
+                        self._prev_click = True
+                else:
+                    self._prev_click = False
+        self._draw()
+    
+    def _draw(self):
+        if self.outline:
+            pygame.draw.rect(self.surface,(0,0,0),(self.x,self.y,self.w,self.w))
+            pygame.draw.rect(self.surface,self.backgound,(self.x + self.outline_amount,self.y + self.outline_amount,self.w - self.outline_amount*2,self.w - self.outline_amount*2))
+        else:
+            pygame.draw.rect(self.surface,self.backgound,(self.x,self.y,self.w,self.w))
+        if self.checked:
+            pygame.draw.line(self.surface,(0,0,0),(self.x,self.y), (self.x + self.w,self.y + self.w),self.check_width)
+            pygame.draw.line(self.surface,(0,0,0),(self.x,self.y + self.w), (self.x + self.w,self.y),self.check_width)
+        
+    
