@@ -1,7 +1,7 @@
 # PygameUI
 UI widgets for pygame
 
-Currently have button and textbox
+Currently have button, textbox and checkbox
 
 # - Button
 
@@ -53,14 +53,14 @@ This method returns a `pygame.Rect` object with the x, y, width and height of th
 ## Create a Inputbox with `UI.TextBox(x, y, w, [optional parameters])`
 
 
-### arguments for `TextBox(self,x, y, w, h = 0,lines = 1, text = "", background = None, font_size = 30, font = "Calibri", text_colour = (0,0,0), surface = None, margin = 2, cursor = True,Enter_action = None)`
+### arguments for `TextBox(self,x, y, w, h = 0,lines = 1, text = "", background = None, font_size = 30, font = "Calibri", text_colour = (0,0,0), surface = None, margin = 2, cursor = True,Enter_action = None, calculateSize = False)`
 
 all optional except x,y, width and height, it syas height it optional but if you want background, you need to supply height
 
-- x = 0 - x position of the textBox
-- y = 0 - y position of the textBox
-- w = 0 - width of the textbox
-- h = 0 - height of the textbox
+- x - x position of the textBox
+- y - y position of the textBox
+- w - width of the textbox
+- h = 0 - height of the textbox, when left as 0, it will use the font height, when calculateSize is True, this will be added to font height
 - lines = 1 - amount of lines the textbox has/can type in
 - text = "" - starting text for textbox
 - background = False - background color
@@ -71,6 +71,7 @@ all optional except x,y, width and height, it syas height it optional but if you
 - margin = 2 - the distance from when the letters start from the side of the textbox
 - cursor = True - show a cursor
 - Enter_action = None - a function that gets called when enter is pressed, no matter if there is more lines to write on
+- calculateSize = False - when calculateSize is True, the height will be calculated and the height supplied will be added on top
 
 ## methods for textbox
 
@@ -78,7 +79,9 @@ all optional except x,y, width and height, it syas height it optional but if you
 event is a pygame.event()
 best way to do this is 
 `for event in pygame.event.get()`
+
 `    if e.type == pygame.KEYDOWN:`
+
 `        textbox.key_down(event)`
 
 ### - `textbox.draw()`
@@ -92,7 +95,39 @@ This method returns the text on a specific line or lines, by defualt, it returns
 The parameter `lines`, it the line or lines you want, this can be an integer of the line or a tuple of 2 integers that are the start and end lines 
 e.g. 
     `get_lines()`, gets all lines  
-    `get_lines(lines = 2)` gets 2nd line
-    `get_lines(lines = (0,2))` gets the 1st and 2nd line
+    
+     get_lines(lines = 2) gets 2nd line
+    
+     get_lines(lines = (0,2)) gets the 1st and 2nd line
 
 The parameter `return_as_string` will return multiple lines as one string with `"\n"` representing a new line instead of a list
+
+# - CheckBox
+
+## Create a CheckBox with `CheckBox(x, y, w, [optional parameters])`
+
+### arguments for `CheckBox(x,y,w,checked=False,background=(255,255,255),outline=True,outline_amount=2,surface=None,check_width = 2)`
+- x - the x position of the checkbox
+- y - the y position of the checkbox
+- w - the width and height of the checkbox
+- checked = False - this is if the checkbox is checked or not, False by default
+- background = (0,0,0) - this is the background colour of the checkbox, white by default
+- outline = True - when True, creates a black border around the edge of the box
+- outline_amount = 2 - this is the thickness of the border, by default it is 2
+- surface = None - this is the surface to draw the checkbox on, if left as None, uses Window surface
+- check_width = 2 - the thickness of the x when the checkbox is checked
+
+## methods for CheckBox
+
+### CheckBox.update()
+this updates the checkbox and draws it on the screen
+
+## To check whether the Checkbox is checked or not
+
+you can check if the CheckBox is checked or not by using `Checkbox.checked` or by checking if it is True
+
+e.g. `print(Checkbox.checked)
+
+     if CheckBox:
+     
+         print("The checkbox is checked")`
