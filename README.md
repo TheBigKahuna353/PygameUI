@@ -50,7 +50,7 @@ This method returns a `pygame.Rect` object with the x, y, width and height of th
 
 # - TextBox
   
-## Create a Inputbox with `UI.TextBox()`
+## Create a Inputbox with `UI.TextBox(x, y, w, [optional parameters])`
 
 
 ### arguments for `TextBox(self,x, y, w, h = 0,lines = 1, text = "", background = None, font_size = 30, font = "Calibri", text_colour = (0,0,0), surface = None, margin = 2, cursor = True,Enter_action = None)`
