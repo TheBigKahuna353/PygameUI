@@ -5,7 +5,7 @@ Currently have button and textbox
 
 # - Button
 
-## Create a button with `UI.Button(x,y)`
+## Create a button with `UI.Button(x,y,[optional parameters])`
 
 ## All paramters are optional except x and y location
 
