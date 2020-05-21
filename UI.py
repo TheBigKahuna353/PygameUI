@@ -47,12 +47,12 @@ class Button:
                     self.h = self.image.get_height()
                 else:
                     if self.text != "":
-                        self.caclulate_size()
+                        self._caclulate_size()
                     else:
                         raise ValueError("cannot calculate width and height without text")
-            self.Generate_images()
+            self._Generate_images()
      
-    def Generate_images(self):     
+    def _Generate_images(self):     
         #generate images
         if self.image == None:
             self.image = pygame.Surface((self.w,self.h))
@@ -68,14 +68,15 @@ class Button:
             self.image.blit(txt,((self.w - txt.get_width())//2, (self.h - txt.get_height())//2))
             self.hover_image.blit(txt,((self.w - txt.get_width())//2, (self.h - txt.get_height())//2))
         elif self.hover_image == None:
-            if self.enlarge:
-                size = (int(self.w * self.enlarge_amount), int(self.h * self.enlarge_amount))
-                self.dx, self.dy = size[0] - self.w, size[1] - self.h
-                self.hover_image = pygame.transform.scale(self.image,size)        
+            self.hover_image = self.image.copy()
+        if self.enlarge:
+            size = (int(self.w * self.enlarge_amount), int(self.h * self.enlarge_amount))
+            self.dx, self.dy = size[0] - self.w, size[1] - self.h
+            self.hover_image = pygame.transform.scale(self.image,size)        
         
             
     #if no width or height is given, calculate it with length of text
-    def caclulate_size(self):
+    def _caclulate_size(self):
         txt = self.font.render(self.text,False,(0,0,0))
         self.w = txt.get_width() + self.w
         self.h = txt.get_height() + self.h
@@ -83,17 +84,19 @@ class Button:
     def get_rect(self):
         return pygame.Rect(self.x,self.y,self.w,self.h)
     
+    #this is what will be shown when print(button)
     def __str__(self):
         if self.text:
             return "Button: '" + self.text + "'"
         else:
             return "Button: at (" + str(self.x)  + ", " + str(self.y) + ")"  
     
+    #update the text of the button, remake the surfaces for the button
     def Update_text(self,text):
         self.text = text
         if self.caclulateSize:
-            self.caclulate_size()
-        self.Generate_images()
+            self._caclulate_size()
+        self._Generate_images()
         print(self.image, text)
     
     
@@ -117,13 +120,13 @@ class Button:
                             self.action()
         self.prev_clicked_state = click
         #draw
-        self.draw()
+        self._draw()
         #return if the button was clicked on
         return returnee
     
     
     #draw the button
-    def draw(self):
+    def _draw(self):
         if self.hover:
             if self.enlarge:
                 self.surface.blit(self.hover_image,(self.x - self.dx//2,self.y - self.dy//2))
