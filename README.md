@@ -45,7 +45,7 @@ return True if the user clicked on the button, If the mouse is held down on the 
 ### To change the text of the button, use `button.Update_text(text)`
 This method changes the text of the button and creates the surfaces for the button, if `calculateSize = True`, it will recalculate the width and height
 
-### You can get the rect of the Button with `button.get_rect()`
+### You can get the rect of the Button with `button.get_rect()` => pygame.Rect
 This method returns a `pygame.Rect` object with the x, y, width and height of the button 
 
 # - TextBox
@@ -74,15 +74,25 @@ all optional except x,y, width and height, it syas height it optional but if you
 
 ## methods for textbox
 
-### - `key_down(event)`
+### - `textbox.key_down(event)`
 event is a pygame.event()
 best way to do this is 
 `for event in pygame.event.get()`
 `    if e.type == pygame.KEYDOWN:`
 `        textbox.key_down(event)`
 
-### - `draw()`
+### - `textbox.draw()`
 draws the textbox
 
-### `get_rect()`
+### - `textbox.get_rect()` => pygame.Rect
 This method returns a `pygame.Rect` object with the x, y, width and height of the textbox
+
+### - `textbox.get_lines(lines = -1, return_as_string = False)` => string or list
+This method returns the text on a specific line or lines, by defualt, it returns all lines
+The parameter `lines`, it the line or lines you want, this can be an integer of the line or a tuple of 2 integers that are the start and end lines 
+e.g. 
+    `get_lines()`, gets all lines  
+    `get_lines(lines = 2)` gets 2nd line
+    `get_lines(lines = (0,2))` gets the 1st and 2nd line
+
+The parameter `return_as_string` will return multiple lines as one string with `"\n"` representing a new line instead of a list
