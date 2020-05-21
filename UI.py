@@ -276,7 +276,9 @@ class TextBox:
             if return_as_string:
                 return "\n".join(string)
             return string
-                    
+
+
+#CheckBox class
 class CheckBox:
     def __init__(self,x,y,w,checked=False,background=(255,255,255),outline=True,outline_amount=2,surface=None,check_width = 2):
         self.x = x
@@ -293,15 +295,19 @@ class CheckBox:
         if self.surface == None:
             raise ValueError("No surface to blit to") 
     
+    #return if checkbox is checked when converting to a bool
     def __bool__(self):
         return self.checked
     
+    #return if checkbox is checked when for comparing e.g. 'if checkbox:'
     def __repr__(self):
         return self.checked
     
+    #when represented as a string e.g. 'print(checkbox)'
     def __str__(self):
         return "Checkbox at (" + str(self.x) + ", " + str(self.y) + "): " + str(self.checked)
     
+    #update the checkbox
     def update(self):
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()[0]
@@ -316,6 +322,7 @@ class CheckBox:
                     self._prev_click = False
         self._draw()
     
+    #draw the checkbox
     def _draw(self):
         if self.outline:
             pygame.draw.rect(self.surface,(0,0,0),(self.x,self.y,self.w,self.w))
