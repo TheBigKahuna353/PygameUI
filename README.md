@@ -145,3 +145,6 @@ e.g.
   screen = Window((500,500))
   screen = Window()
   `
+
+## - update_all()
+updates all widgets, easier than calling `widget.update()` on every widget 
