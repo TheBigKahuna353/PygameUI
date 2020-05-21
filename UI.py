@@ -154,7 +154,7 @@ class Button:
 #class textbox
 class TextBox:
     
-    def __init__(self,x, y, w, h = 0,lines = 1, text = "", background = None, font_size = 30, font = "Calibri", text_colour = (0,0,0), surface = None, margin = 2, cursor = True,Enter_action = None):
+    def __init__(self,x, y, w, h = 0,lines = 1, text = "", background = None, font_size = 30, font = "Calibri", text_colour = (0,0,0), surface = None, margin = 2, cursor = True,Enter_action = None, calculateSize = False):
         self.x = x
         self.y = y
         self.w = w
@@ -179,6 +179,8 @@ class TextBox:
             self.surface = pygame.display.get_surface()
             if self.surface == None:
                 raise ValueError("No surface to blit to")
+        if calculateSize or self.h == 0:
+            self.h = self._get_font_height() + h
     
     #get the width of the text using the font
     def _get_text_width(self,text):
@@ -187,6 +189,10 @@ class TextBox:
             return 0
         obj = self.font.render(text,True,(0,0,0))
         return obj.get_width()
+    
+    def _get_font_height(self):
+        obj = self.font.render(" ",True,(0,0,0))
+        return obj.get_height()
     
     #call this when the user presses a key down, supply the event from `pygame.event.get()`
     def key_down(self,e):
