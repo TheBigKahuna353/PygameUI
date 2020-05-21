@@ -3,14 +3,14 @@ UI widgets for pygame
 
 Currently have button and textbox
 
-- Button
+# - Button
 
-Create a button with `UI.Button()`
+## Create a button with `UI.Button(x,y)`
 
-All paramters are optional except x and y location
+## All paramters are optional except x and y location
 
 
-Arguments for `Button(x,y,w= 0,h=0,text="", calculateSize = False,background = (255,255,255),font = "Calibri", font_size = 30, text_colour = (0,0,0), outline = False, outline_amount = 2, half_outline = False,action = None, action_arg = None, surface = None, image = None, enlarge = False, enlarge_amount = 1.1)`
+### Arguments for `Button(x,y,w= 0,h=0,text="", calculateSize = False,background = (255,255,255),font = "Calibri", font_size = 30, text_colour = (0,0,0), outline = False, outline_amount = 2, half_outline = False,action = None, action_arg = None, surface = None, image = None, enlarge = False, enlarge_amount = 1.1)`
 
 
 - x - x location of the button
@@ -33,18 +33,18 @@ Arguments for `Button(x,y,w= 0,h=0,text="", calculateSize = False,background = (
 - enlarge = False - When enlarge is set to True, it will enlarge the image when the mouse is over the button, only when image is supplied
 - enlarge_amount = 1.1 - the amount to enlarge by 
 
-To update the button, you can use `button.update()` => bool
+### To update the button, you can use `button.update()` => bool
 
-this method draws the button and calculates if the mouse has clicked the button
+This method draws the button and calculates if the mouse has clicked the button
 
 return True if the user clicked on the button, If the mouse is held down on the button, only return True first frame
 
-- TextBox
+# - TextBox
   
-Create a Inputbox with `UI.TextBox()`
+## Create a Inputbox with `UI.TextBox()`
 
 
-arguments for `TextBox(self,x, y, w, h = 0,lines = 1, text = "", background = None, font_size = 30, font = "Calibri", text_colour = (0,0,0), surface = None, margin = 2, cursor = True,Enter_action = None)`
+### arguments for `TextBox(self,x, y, w, h = 0,lines = 1, text = "", background = None, font_size = 30, font = "Calibri", text_colour = (0,0,0), surface = None, margin = 2, cursor = True,Enter_action = None)`
 
 all optional except x,y, width and height, it syas height it optional but if you want background, you need to supply height
 
