@@ -1,7 +1,7 @@
 # PygameUI
 UI widgets for pygame
 
-Currently have button, textbox and checkbox
+Currently have [button](#--button), [textbox](#--textbox) and [checkbox](#--checkbox) and [other](--other) functions
 
 # - Button
 
@@ -130,4 +130,18 @@ e.g. `print(Checkbox.checked)
 
      if CheckBox:
      
-         print("The checkbox is checked")`
+         print("The checkbox is checked")
+`
+
+# Other Functions
+
+## - Window(w,h) => pygame.Surface
+this is a shorter way of typing `screen = pygame.display.set_mode((w,h))`
+
+you can input a width and height, or in a tuple. If no width and height is supplied, it creates 500x500
+
+e.g. 
+` screen = Window(500,500) 
+  screen = Window((500,500))
+  screen = Window()
+  `
