@@ -1,7 +1,7 @@
 # PygameUI
 UI widgets for pygame
 
-Currently have button and textbox
+Currently have button, textbox and checkbox
 
 # - Button
 
