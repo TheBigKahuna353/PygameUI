@@ -1,4 +1,7 @@
-#template for buttons and textboxes in pygame
+#Button and Textbox classes for pygame
+#this is supposed to make it as easy as possible to make and use buttons
+#Documentation at 'https://github.com/TheBigKahuna353/PygameUI'
+#All made by Jordan Withell
 
 import pygame
 

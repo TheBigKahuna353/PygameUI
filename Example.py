@@ -32,12 +32,12 @@ button1 = UI.Button(
     dont_generate = True
 )
 
-print(button1)
-
 #becuase we want to calculate the size of button1 without text or an image, we can use 'dont_generate = True'
 #then use Update_text(text) to calculate the size
 
 button1.Update_text("Button")
+
+print(button1)
 
 button2 = UI.Button(
     x = 200,
