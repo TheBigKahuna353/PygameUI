@@ -1,4 +1,7 @@
-#template for buttons and textboxes in pygame
+#Button and Textbox classes for pygame
+#this is supposed to make it as easy as possible to make and use buttons
+#Documentation at 'https://github.com/TheBigKahuna353/PygameUI'
+#All made by Jordan Withell
 
 import pygame
 
@@ -10,6 +13,13 @@ def Window(w = 500, h = 500):
     screen = pygame.display.set_mode((w,h))
     return screen
 
+def update_all():
+    for widget in _all_widgets:
+        widget.update()
+
+_all_widgets = []
+
+
 #button class
 class Button:
     def __init__(self,x,y,w= 0,h=0, calculateSize = False,text="",background = (255,255,255),font = "Calibri", font_size = 30, font_colour = (0,0,0), outline = False, outline_amount = 2, half_outline = False,action = None, action_arg = None, surface = None, image = None, enlarge = False, enlarge_amount = 1.1, hover_image = None, dont_generate = False, hover_background_color = None):
@@ -17,6 +27,7 @@ class Button:
         self.y = y
         self.w = w
         self.h = h
+        _all_widgets.append(self)
         self.surface = surface
         #if no surface is supplied, try getting 
         if self.surface == None:
@@ -143,11 +154,12 @@ class Button:
 #class textbox
 class TextBox:
     
-    def __init__(self,x, y, w, h = 0,lines = 1, text = "", background = None, font_size = 30, font = "Calibri", text_colour = (0,0,0), surface = None, margin = 2, cursor = True,Enter_action = None):
+    def __init__(self,x, y, w, h = 0,lines = 1, text = "", background = None, font_size = 30, font = "Calibri", text_colour = (0,0,0), surface = None, margin = 2, cursor = True,Enter_action = None, calculateSize = False):
         self.x = x
         self.y = y
         self.w = w
         self.h = h
+        _all_widgets.append(self)
         self.cursor = cursor
         self.current_line = 0
         self.current_col = len(text)
@@ -157,7 +169,9 @@ class TextBox:
         self.text = [list(text)]
         self.char_length = [self._get_text_width(x) for x in self.text]
         self.background = background
-        self.surface= surface
+        self.surface= surface if surface else pygame.display.get_surface()
+        if self.surface == None:
+            raise ValueError("No surface to blit to")        
         self.margin = margin
         self.Enter_action = Enter_action
         #if no surface is supplied, get window
@@ -165,6 +179,8 @@ class TextBox:
             self.surface = pygame.display.get_surface()
             if self.surface == None:
                 raise ValueError("No surface to blit to")
+        if calculateSize or self.h == 0:
+            self.h = self._get_font_height() + h
     
     #get the width of the text using the font
     def _get_text_width(self,text):
@@ -173,6 +189,10 @@ class TextBox:
             return 0
         obj = self.font.render(text,True,(0,0,0))
         return obj.get_width()
+    
+    def _get_font_height(self):
+        obj = self.font.render(" ",True,(0,0,0))
+        return obj.get_height()
     
     #call this when the user presses a key down, supply the event from `pygame.event.get()`
     def key_down(self,e):
@@ -262,5 +282,61 @@ class TextBox:
             if return_as_string:
                 return "\n".join(string)
             return string
-                    
 
+
+#CheckBox class
+class CheckBox:
+    def __init__(self,x,y,w,checked=False,background=(255,255,255),outline=True,outline_amount=2,surface=None,check_width = 2):
+        self.x = x
+        self.y = y
+        self.w = w
+        _all_widgets.append(self)
+        self.checked = checked
+        self.backgound = background
+        self.outline = outline
+        self.outline_amount = outline_amount
+        self._prev_click = False
+        self.surface = surface if surface else pygame.display.get_surface()
+        self.check_width = check_width
+        if self.surface == None:
+            raise ValueError("No surface to blit to") 
+    
+    #return if checkbox is checked when converting to a bool
+    def __bool__(self):
+        return self.checked
+    
+    #return if checkbox is checked when for comparing e.g. 'if checkbox:'
+    def __repr__(self):
+        return self.checked
+    
+    #when represented as a string e.g. 'print(checkbox)'
+    def __str__(self):
+        return "Checkbox at (" + str(self.x) + ", " + str(self.y) + "): " + str(self.checked)
+    
+    #update the checkbox
+    def update(self):
+        mouse = pygame.mouse.get_pos()
+        click = pygame.mouse.get_pressed()[0]
+        
+        if mouse[0] > self.x and mouse[0] < self.x + self.w:
+            if mouse[1] > self.y and mouse[1] < self.y + self.w:
+                if click:
+                    if not self._prev_click:
+                        self.checked = not self.checked
+                        self._prev_click = True
+                else:
+                    self._prev_click = False
+        self._draw()
+    
+    #draw the checkbox
+    def _draw(self):
+        if self.outline:
+            pygame.draw.rect(self.surface,(0,0,0),(self.x,self.y,self.w,self.w))
+            pygame.draw.rect(self.surface,self.backgound,(self.x + self.outline_amount,self.y + self.outline_amount,self.w - self.outline_amount*2,self.w - self.outline_amount*2))
+        else:
+            pygame.draw.rect(self.surface,self.backgound,(self.x,self.y,self.w,self.w))
+        if self.checked:
+            pygame.draw.line(self.surface,(0,0,0),(self.x,self.y), (self.x + self.w,self.y + self.w),self.check_width)
+            pygame.draw.line(self.surface,(0,0,0),(self.x,self.y + self.w), (self.x + self.w,self.y),self.check_width)
+        
+    

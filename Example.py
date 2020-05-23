@@ -32,12 +32,12 @@ button1 = UI.Button(
     dont_generate = True
 )
 
-print(button1)
-
 #becuase we want to calculate the size of button1 without text or an image, we can use 'dont_generate = True'
 #then use Update_text(text) to calculate the size
 
 button1.Update_text("Button")
+
+print(button1)
 
 button2 = UI.Button(
     x = 200,
@@ -66,6 +66,9 @@ button_img = UI.Button(
 )
 
 
+checkBox = UI.CheckBox(300,100,30, background=(200,200,200))
+
+
 running = True
 # Game Loop
 while running:
@@ -78,7 +81,10 @@ while running:
         print("button2 clicked")
         
     button_img.update()
+    checkBox.update()
     
+    if checkBox:
+        print("checkBox = true")
     
     pygame.display.update()
     for e in pygame.event.get():             # checks all events that happen
