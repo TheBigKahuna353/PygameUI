@@ -76,6 +76,7 @@ checkBox = UI.CheckBox(
     300,
     180,
     30, 
+    outline=UI.Outline(),
     background=(200,200,200)
 )
 

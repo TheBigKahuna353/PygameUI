@@ -1,5 +1,5 @@
-#Button and Textbox classes for pygame
-#this is supposed to make it as easy as possible to make and use buttons
+#Ui Widgets for pygame
+#this is supposed to make it as easy as possible to make and use buttons and other widgets
 #Documentation at 'https://github.com/TheBigKahuna353/PygameUI'
 #All made by Jordan Withell
 
@@ -10,13 +10,18 @@ def Window(w = 500, h = 500):
     pygame.init()
     return pygame.display.set_mode((w,h))
 
+#instead of updating every widget individually, this func updates all created for you
 def update_all():
     for widget in _all_widgets:
         widget.update()
 
+#this is a list that holds every widget created, used by the func update_all
 _all_widgets = []
 
+#this creates a curved rect, given a w,h and the curve amount, bewtween 0 and 1
 def curve_square(width,height,curve, color = (0,0,0)):
+    if not 0 < curve < 1:
+        raise ValueError("curve value out of range, must be between 0 and 1")
     curve *= min(width,height)
     curve = int(curve)
     surf = pygame.Surface((width,height),pygame.SRCALPHA)
@@ -27,8 +32,14 @@ def curve_square(width,height,curve, color = (0,0,0)):
     pygame.draw.circle(surf,color, (curve,height - curve),curve)
     pygame.draw.circle(surf,color, (width - curve,height - curve),curve)
     return surf
-    
 
+#
+class Shape:
+    def __init__(self,type = "rect",col=(255,255,255),w=0,h=0):
+        pass
+
+#used to simplify outlining the button/checkbox
+#instead of many vars in button, create an outline object to give to button
 class Outline:
     def __init__(self, type="full", outline_amount = 2, outline_color = (0,0,0)):
         self.type = type
@@ -74,6 +85,7 @@ class Button:
         self.hover = False
         self.caclulateSize = calculateSize
         self.prev_clicked_state = False
+        #create the surfaces for the button to blit every frame
         if not dont_generate:
             if self.w == 0 or self.h == 0 or self.caclulateSize:
                 if image != None:
@@ -96,13 +108,17 @@ class Button:
             #self.hover_image.fill(self.hover_background)
             if self.out:
                 self.out._draw(self.hover_image,self.hover_background,self.w,self.h)
+            self.hover_image.convert()
+            self.image.convert()
         elif self.hover_image == None:
             self.hover_image = self.image.copy()
             if self.out:
-                pygame.draw.rect(self.hover_image,(0,0,0,255),(0,0,self.w,self.outline_amount))
-                pygame.draw.rect(self.hover_image,(0,0,0,255),(0,0,self.outline_amount,self.h))
-                pygame.draw.rect(self.hover_image,(0,0,0,255),(self.w,self.h,-self.w,-self.outline_amount))
-                pygame.draw.rect(self.hover_image,(0,0,0,255),(self.w,self.h,-self.outline_amount, -self.h))
+                pygame.draw.rect(self.hover_image,(0,0,0,255),(0,0,self.w,self.out.s))
+                pygame.draw.rect(self.hover_image,(0,0,0,255),(0,0,self.out.s,self.h))
+                pygame.draw.rect(self.hover_image,(0,0,0,255),(self.w,self.h,-self.w,-self.out.s))
+                pygame.draw.rect(self.hover_image,(0,0,0,255),(self.w,self.h,-self.out.s, -self.h))
+            self.hover_image.convert_alpha()
+            self.image.convert_alpha()
         if self.enlarge:
             size = (int(self.w * self.enlarge_amount), int(self.h * self.enlarge_amount))
             self.dx, self.dy = size[0] - self.w, size[1] - self.h
@@ -116,6 +132,8 @@ class Button:
         if self.hover_image.get_width() != self.w or self.hover_image.get_height() != self.h:
             self.enlarge = True
             self.dx, self.dy = self.hover_image.get_width() - self.w, self.hover_image.get_height() - self.h
+        self.image.convert()
+        self.hover_image.convert()
         
             
     #if no width or height is given, calculate it with length of text
@@ -218,6 +236,7 @@ class TextBox:
         obj = self.font.render(text,True,(0,0,0))
         return obj.get_width()
     
+    #returns the height of the font
     def _get_font_height(self):
         obj = self.font.render(" ",True,(0,0,0))
         return obj.get_height()
@@ -285,6 +304,7 @@ class TextBox:
                                      (self.x + total,self.y + (self.h*(self.current_line+1))),2)
             #print(self.current_col)
     
+    #update should be called every frame, it draws the textbox
     def update(self):
         self._draw()
     
@@ -318,15 +338,14 @@ class TextBox:
 
 #CheckBox class
 class CheckBox:
-    def __init__(self,x,y,w,checked=False,background=(255,255,255),outline=True,outline_amount=2,surface=None,check_width = 2):
+    def __init__(self,x,y,w,checked=False,background=(255,255,255),outline=None,surface=None,check_width = 2):
         self.x = x
         self.y = y
         self.w = w
         _all_widgets.append(self)
         self.checked = checked
         self.backgound = background
-        self.outline = outline
-        self.outline_amount = outline_amount
+        self.out = outline
         self._prev_click = False
         self.surface = surface if surface else pygame.display.get_surface()
         self.check_width = check_width
@@ -362,9 +381,9 @@ class CheckBox:
     
     #draw the checkbox
     def _draw(self):
-        if self.outline:
+        if self.out:
             pygame.draw.rect(self.surface,(0,0,0),(self.x,self.y,self.w,self.w))
-            pygame.draw.rect(self.surface,self.backgound,(self.x + self.outline_amount,self.y + self.outline_amount,self.w - self.outline_amount*2,self.w - self.outline_amount*2))
+            pygame.draw.rect(self.surface,self.backgound,(self.x + self.out.s,self.y + self.out.s,self.w - self.out.s*2,self.w - self.out.s*2))
         else:
             pygame.draw.rect(self.surface,self.backgound,(self.x,self.y,self.w,self.w))
         if self.checked:
