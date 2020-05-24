@@ -14,7 +14,7 @@ def button_clicked():
 InputBox = UI.TextBox(
     x = 100,
     y = 100,
-    w = 100,
+    w = 300,
     h = 30,
     background=(200,200,200), 
     lines = 2,
@@ -47,35 +47,40 @@ button2 = UI.Button(
     text = "Button2",
     half_outline = True,
     background = (200,200,200), 
-    hover_background_color = (255,0,0)
+    hover_background_color = (240,240,240),
+    outline_color=(200,200,200)
 )
 
 
 #create an image for our button
-button_img = pygame.Surface((30,30),pygame.SRCALPHA) #the pygame.SRCHALPHA makes it transparent
-pygame.draw.line(button_img,(0,0,0),(0,5),(30,5),3)
-pygame.draw.line(button_img,(0,0,0),(0,15),(30,15),3)
-pygame.draw.line(button_img,(0,0,0),(0,25),(30,25),3)
+img = UI.curve_square(120,35,0.4,(200,200,200))
 
 #create our button using our image
 button_img = UI.Button(
     x = 350,
     y = 300,
-    image = button_img,
+    image = img,
     enlarge = True, 
+    text = "Button3"
 )
 
 
-checkBox = UI.CheckBox(300,100,30, background=(200,200,200))
+checkBox = UI.CheckBox(
+    300,
+    180,
+    30, 
+    background=(200,200,200)
+)
 
 
 running = True
 # Game Loop
 while running:
+    pygame.display.update()
     screen.fill((255,255,255))
     
     #draw and update our buttons and textbox
-    InputBox.draw()
+    InputBox.update()
     button1.update()
     if button2.update(): #if button2 is clicked, it will return True
         print("button2 clicked")
@@ -83,10 +88,10 @@ while running:
     button_img.update()
     checkBox.update()
     
+    
     if checkBox:
         print("checkBox = true")
     
-    pygame.display.update()
     for e in pygame.event.get():             # checks all events that happen
         if e.type == pygame.QUIT:
             running = False
