@@ -29,10 +29,22 @@ def curve_square(width,height,curve, color = (0,0,0)):
     return surf
     
 
+class Outline:
+    def __init__(self, type="full", outline_amount = 2, outline_color = (0,0,0)):
+        self.type = type
+        self.s = outline_amount
+        self.col = outline_color
+
+    def _draw(self,surf,col,w,h):
+        if self.type == "half":
+            pygame.draw.rect(surf,col,(0,0, w-self.s,h-self.s))
+        elif self.type == "full":
+            pygame.draw.rect(surf,col,(self.s,self.s,w-self.s*2,h - self.s*2))
+
 
 #button class
 class Button:
-    def __init__(self,x,y,w= 0,h=0, calculateSize = False,text="",background = (255,255,255),font = "Calibri", font_size = 30, font_colour = (0,0,0), outline = False, outline_amount = 2, outline_color = (0,0,0), half_outline = False,action = None, action_arg = None, surface = None, image = None, enlarge = False, enlarge_amount = 1.1, hover_image = None, dont_generate = False, hover_background_color = None):
+    def __init__(self,x,y,w= 0,h=0, calculateSize = False,text="",background = (255,255,255),font = "Calibri", font_size = 30, font_colour = (0,0,0), outline = None,action = None, action_arg = None, surface = None, image = None, enlarge = False, enlarge_amount = 1.1, hover_image = None, dont_generate = False, hover_background_color = None):
         self.x = x
         self.y = y
         self.w = w
@@ -49,12 +61,9 @@ class Button:
         self.background = background
         self.hover_background = self.background if hover_background_color == None else hover_background_color
         self.font = pygame.font.Font(pygame.font.match_font(font),font_size)
-        self.outline = outline
-        self.outline_amount = outline_amount
-        self.outline_color = outline_color
-        self.half_outline = half_outline
+        self.out = outline
         self.action = action
-        self.image = image
+        self.image = image.copy() if image else None
         self.hover_image = hover_image
         self.enlarge = enlarge
         self.enlarge_amount = enlarge_amount
@@ -83,30 +92,30 @@ class Button:
             self.image = pygame.Surface((self.w,self.h))
             self.hover_image = pygame.Surface((self.w,self.h))
             self.image.fill(self.background)
-            self.hover_image.fill(self.outline_color)
+            self.hover_image.fill(self.out.col)
             #self.hover_image.fill(self.hover_background)
-            if self.outline:
-                ow = self.outline_amount * 2
-                pygame.draw.rect(self.hover_image,self.hover_background,(self.outline_amount,self.outline_amount,self.w-ow,self.h - ow))
-            elif self.half_outline:
-                pygame.draw.rect(self.hover_image,self.hover_background,(0,0, self.w-self.outline_amount,self.h-self.outline_amount))
+            if self.out:
+                self.out._draw(self.hover_image,self.hover_background,self.w,self.h)
         elif self.hover_image == None:
             self.hover_image = self.image.copy()
-            if self.outline:
+            if self.out:
                 pygame.draw.rect(self.hover_image,(0,0,0,255),(0,0,self.w,self.outline_amount))
                 pygame.draw.rect(self.hover_image,(0,0,0,255),(0,0,self.outline_amount,self.h))
                 pygame.draw.rect(self.hover_image,(0,0,0,255),(self.w,self.h,-self.w,-self.outline_amount))
                 pygame.draw.rect(self.hover_image,(0,0,0,255),(self.w,self.h,-self.outline_amount, -self.h))
-            if self.enlarge:
-                size = (int(self.w * self.enlarge_amount), int(self.h * self.enlarge_amount))
-                self.dx, self.dy = size[0] - self.w, size[1] - self.h
-                self.hover_image = pygame.transform.scale(self.image,size) 
+        if self.enlarge:
+            size = (int(self.w * self.enlarge_amount), int(self.h * self.enlarge_amount))
+            self.dx, self.dy = size[0] - self.w, size[1] - self.h
+            self.hover_image = pygame.transform.scale(self.image,size) 
         if self.text != "":
             txt = self.font.render(self.text,True,self.text_colour)
             self.image.blit(txt,((self.w - txt.get_width())//2, (self.h - txt.get_height())//2))
             if self.enlarge:
                 txt = self.enlarge_font.render(self.text,True,self.text_colour)
-            self.hover_image.blit(txt,((self.hover_image.get_width() - txt.get_width())//2, (self.hover_image.get_height() - txt.get_height())//2))             
+            self.hover_image.blit(txt,((self.hover_image.get_width() - txt.get_width())//2, (self.hover_image.get_height() - txt.get_height())//2))  
+        if self.hover_image.get_width() != self.w or self.hover_image.get_height() != self.h:
+            self.enlarge = True
+            self.dx, self.dy = self.hover_image.get_width() - self.w, self.hover_image.get_height() - self.h
         
             
     #if no width or height is given, calculate it with length of text

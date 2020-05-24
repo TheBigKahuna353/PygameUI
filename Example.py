@@ -26,7 +26,7 @@ button1 = UI.Button(
     w = 10,
     h = 5,
     calculateSize = True,
-    outline = True,
+    outline = UI.Outline(),
     background = (200,200,200), 
     action = button_clicked,
     dont_generate = True
@@ -45,15 +45,15 @@ button2 = UI.Button(
     w = 120,
     h = 35,
     text = "Button2",
-    half_outline = True,
     background = (200,200,200), 
     hover_background_color = (240,240,240),
-    outline_color=(200,200,200)
+    outline=UI.Outline("half",outline_color=(200,200,200))
 )
 
 
 #create an image for our button
 img = UI.curve_square(120,35,0.4,(200,200,200))
+hover_img = UI.curve_square(130,45,0.4,(200,200,200))
 
 #create our button using our image
 button_img = UI.Button(
@@ -62,6 +62,13 @@ button_img = UI.Button(
     image = img,
     enlarge = True, 
     text = "Button3"
+)
+button_img2 = UI.Button(
+    x = 350,
+    y = 350,
+    image = img,
+    hover_image=hover_img,
+    text = "Button4"
 )
 
 
@@ -86,6 +93,7 @@ while running:
         print("button2 clicked")
         
     button_img.update()
+    button_img2.update()
     checkBox.update()
     
     
