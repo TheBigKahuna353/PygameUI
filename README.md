@@ -10,7 +10,7 @@ Currently have [button](#--button), [textbox](#--textbox) and [checkbox](#--chec
 ## All paramters are optional except x and y location
 
 
-### Arguments for `Button(x,y,w= 0,h=0,text="", calculateSize = False,background = (255,255,255),font = "Calibri", font_size = 30, text_colour = (0,0,0), outline = False, outline_amount = 2, half_outline = False,action = None, action_arg = None, surface = None, image = None, enlarge = False, enlarge_amount = 1.1)`
+### Arguments for `Button(x,y,w= 0,h=0,text="", calculateSize = False,background = (255,255,255),font = "Calibri", font_size = 30, text_colour = (0,0,0), outline = None,action = None, action_arg = None, surface = None, image = None, enlarge = False, enlarge_amount = 1.1)`
 
 
 - x - x location of the button
@@ -24,9 +24,7 @@ Currently have [button](#--button), [textbox](#--textbox) and [checkbox](#--chec
 - font = "Calibri" - the font of the text
 - font_size = 30  - the font size of the text
 - font_colour = (0,0,0) - the color of the text
-- outline = False - when set to True, if the mouse is over the button, it will outline the button
-- outline_amount = 2 - the amount to outline of the button when outline = True or half_outline = True, this does not make the button bigger, but smaller
-- half_outline = False - when set to True, it will outline 2 sides of the button instead of all 4 in outline
+- outline = None - Outline for the object, needs to be an `UI.Outline()` object
 - action = None - function that gets called when button clicked
 - action_arg = None - argument for action function
 - surface = None - surface the button gets blit to, if left as None, it will use the window surface
@@ -106,14 +104,13 @@ The parameter `return_as_string` will return multiple lines as one string with `
 
 ## Create a CheckBox with `CheckBox(x, y, w, [optional parameters])`
 
-### arguments for `CheckBox(x,y,w,checked=False,background=(255,255,255),outline=True,outline_amount=2,surface=None,check_width = 2)`
+### arguments for `CheckBox(x,y,w,checked=False,background=(255,255,255),outline=None,surface=None,check_width = 2)`
 - x - the x position of the checkbox
 - y - the y position of the checkbox
 - w - the width and height of the checkbox
 - checked = False - this is if the checkbox is checked or not, False by default
 - background = (0,0,0) - this is the background colour of the checkbox, white by default
-- outline = True - when True, creates a black border around the edge of the box
-- outline_amount = 2 - this is the thickness of the border, by default it is 2
+- outline = None - this outlines the object, needs to be a `UI.Outline()` object
 - surface = None - this is the surface to draw the checkbox on, if left as None, uses Window surface
 - check_width = 2 - the thickness of the x when the checkbox is checked
 
@@ -148,3 +145,15 @@ e.g.
 
 ## - update_all()
 updates all widgets, easier than calling `widget.update()` on every widget 
+
+## - curved_square(width, height, curve, color) => pygame.Surface
+this creates a rectangle with curved corners.
+
+width and height is the width and height of the rectangle
+
+curve is the curve amount, 0 is 0 curve and 1 is full curve, giving a value above 1 or below 0 will result in a ValueError
+
+color is the colour to draw it
+
+returns the shape on a pygame.Surface.
+
