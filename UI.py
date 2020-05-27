@@ -20,7 +20,7 @@ _all_widgets = []
 
 #this creates a curved rect, given a w,h and the curve amount, bewtween 0 and 1
 def curve_square(width,height,curve, color = (0,0,0)):
-    if not 0 < curve < 1:
+    if not 0 <= curve <= 1:
         raise ValueError("curve value out of range, must be between 0 and 1")
     curve *= min(width,height)
     curve = int(curve)
@@ -46,16 +46,17 @@ class Outline:
         self.s = outline_amount
         self.col = outline_color
 
-    def _draw(self,surf,col,w,h):
+    def _draw(self,surf,col,w,h,curve_amount):
         if self.type == "half":
-            pygame.draw.rect(surf,col,(0,0, w-self.s,h-self.s))
+            surf.blit(curve_square(w, h, curve_amount, col), (0,0))
         elif self.type == "full":
-            pygame.draw.rect(surf,col,(self.s,self.s,w-self.s*2,h - self.s*2))
+            surf.blit(curve_square(w, h, curve_amount, self.col), (0,0))
+            surf.blit(curve_square(w-self.s*2, h-self.s*2, curve_amount, col), (self.s,self.s))
 
 
 #button class
 class Button:
-    def __init__(self,x,y,w= 0,h=0, calculateSize = False,text="",background = (255,255,255),font = "Calibri", font_size = 30, font_colour = (0,0,0), outline = None,action = None, action_arg = None, surface = None, image = None, enlarge = False, enlarge_amount = 1.1, hover_image = None, dont_generate = False, hover_background_color = None):
+    def __init__(self,x,y,w= 0,h=0, calculateSize = False,text="",background = (255,255,255),font = "Calibri", font_size = 30, font_colour = (0,0,0), outline = None,action = None, action_arg = None, surface = None, image = None, enlarge = False, enlarge_amount = 1.1, hover_image = None, dont_generate = False, hover_background_color = None, curve_amount = 0):
         self.x = x
         self.y = y
         self.w = w
@@ -70,11 +71,13 @@ class Button:
         self.text = text
         self.text_colour = font_colour
         self.background = background
+        self.curve_amount = curve_amount
         self.hover_background = self.background if hover_background_color == None else hover_background_color
         self.font = pygame.font.Font(pygame.font.match_font(font),font_size)
         self.out = outline
         self.action = action
         self.image = image.copy() if image else None
+        self.clicked_on = False
         self.hover_image = hover_image
         self.enlarge = enlarge
         self.enlarge_amount = enlarge_amount
@@ -101,13 +104,13 @@ class Button:
     def _Generate_images(self):     
         #generate images
         if self.image == None:
-            self.image = pygame.Surface((self.w,self.h))
-            self.hover_image = pygame.Surface((self.w,self.h))
-            self.image.fill(self.background)
-            self.hover_image.fill(self.out.col)
+            self.image = pygame.Surface((self.w,self.h), pygame.SRCALPHA)
+            self.hover_image = pygame.Surface((self.w,self.h), pygame.SRCALPHA)
+            self.image.blit(curve_square(self.w, self.h, self.curve_amount, self.background), (0,0))
+            self.hover_image.blit(curve_square(self.w, self.h, self.curve_amount, self.hover_background), (0,0))
             #self.hover_image.fill(self.hover_background)
             if self.out:
-                self.out._draw(self.hover_image,self.hover_background,self.w,self.h)
+                self.out._draw(self.hover_image,self.hover_background,self.w,self.h,self.curve_amount)
             self.hover_image.convert()
             self.image.convert()
         elif self.hover_image == None:
@@ -170,14 +173,18 @@ class Button:
         if mouse_pos[0] > self.x and mouse_pos[0] < self.x+self.w:
             if mouse_pos[1] > self.y and mouse_pos[1] < self.y+self.h:
                 self.hover = True
-                #check for click, if held down, action only gets caleed once
+                #check for click, if held down, action only gets called once
                 if click and not self.prev_clicked_state:
-                    returnee = True
+                    self.clicked_on = True
+                if self.prev_clicked_state and self.clicked_on and click == False:
                     if self.action:
                         if self.action_arg:
                             self.action(self.action_arg)
                         else:
                             self.action()
+                    returnee = True
+                if not click:
+                    self.clicked_on = False
         self.prev_clicked_state = click
         #draw
         self._draw()

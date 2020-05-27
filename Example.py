@@ -29,7 +29,8 @@ button1 = UI.Button(
     outline = UI.Outline(),
     background = (200,200,200), 
     action = button_clicked,
-    dont_generate = True
+    dont_generate = True,
+    curve_amount=0.5
 )
 
 #becuase we want to calculate the size of button1 without text or an image, we can use 'dont_generate = True'
@@ -44,6 +45,7 @@ button2 = UI.Button(
     y = 300,
     w = 120,
     h = 35,
+    curve_amount=0.3,
     text = "Button2",
     background = (200,200,200), 
     hover_background_color = (240,240,240),
@@ -52,16 +54,17 @@ button2 = UI.Button(
 
 
 #create an image for our button
-img = UI.curve_square(120,35,0.4,(200,200,200))
-hover_img = UI.curve_square(130,45,0.4,(200,200,200))
+#img = UI.curve_square(120,35,0.4,(200,200,200))
+img = pygame.Surface((100,100),pygame.SRCALPHA)
+hover_img = UI.curve_square(230,45,0.4,(0,0,200))
 
 #create our button using our image
 button_img = UI.Button(
-    x = 350,
-    y = 300,
+    x = 100,
+    y = 100,
     image = img,
     enlarge = True, 
-    text = "Button3"
+    text = ""
 )
 button_img2 = UI.Button(
     x = 350,
@@ -81,21 +84,27 @@ checkBox = UI.CheckBox(
 )
 
 
+
+
 running = True
 # Game Loop
 while running:
     pygame.display.update()
     screen.fill((255,255,255))
     
+    #pygame.draw.rect(screen,(255,0,0),(100,100,100,100))
+    
     #draw and update our buttons and textbox
-    InputBox.update()
+    #InputBox.update()
     button1.update()
     if button2.update(): #if button2 is clicked, it will return True
         print("button2 clicked")
         
-    button_img.update()
+    if button_img.update():
+        print("clicked invisible button")
     button_img2.update()
     checkBox.update()
+    
     
     
     if checkBox:
