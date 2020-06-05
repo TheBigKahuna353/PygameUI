@@ -95,7 +95,7 @@ while running:
     #pygame.draw.rect(screen,(255,0,0),(100,100,100,100))
     
     #draw and update our buttons and textbox
-    #InputBox.update()
+    InputBox.update()
     button1.update()
     if button2.update(): #if button2 is clicked, it will return True
         print("button2 clicked")
