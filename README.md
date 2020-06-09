@@ -11,10 +11,10 @@ this is a shorter way of typing `screen = pygame.display.set_mode((w,h))`
 you can input a width and height, or in a tuple. If no width and height is supplied, it creates 500x500
 
 e.g. 
-` screen = Window(500,500) 
+``` screen = Window(500,500) 
   screen = Window((500,500))
   screen = Window()
-  `
+  ```
 
 ## - update_all()
 updates all widgets, easier than calling `widget.update()` on every widget 
