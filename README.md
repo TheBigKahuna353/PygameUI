@@ -3,6 +3,33 @@ UI widgets for pygame
 
 Currently have [button](#--button), [textbox](#--textbox) and [checkbox](#--checkbox) and [other](--other) functions
 
+# Other Functions
+
+## - Window(w,h) => pygame.Surface
+this is a shorter way of typing `screen = pygame.display.set_mode((w,h))`
+
+you can input a width and height, or in a tuple. If no width and height is supplied, it creates 500x500
+
+e.g. 
+` screen = Window(500,500) 
+  screen = Window((500,500))
+  screen = Window()
+  `
+
+## - update_all()
+updates all widgets, easier than calling `widget.update()` on every widget 
+
+## - curved_square(width, height, curve, color) => pygame.Surface
+this creates a rectangle with curved corners.
+
+width and height is the width and height of the rectangle
+
+curve is the curve amount, 0 is 0 curve and 1 is full curve, giving a value above 1 or below 0 will result in a ValueError
+
+color is the colour to draw it
+
+returns the shape on a pygame.Surface.
+
 # - Button
 
 ## Create a button with `UI.Button(x,y,w,h,optional_parameters])`
@@ -147,31 +174,3 @@ e.g. `print(Checkbox.checked)
      
          print("The checkbox is checked")
 `
-
-# Other Functions
-
-## - Window(w,h) => pygame.Surface
-this is a shorter way of typing `screen = pygame.display.set_mode((w,h))`
-
-you can input a width and height, or in a tuple. If no width and height is supplied, it creates 500x500
-
-e.g. 
-` screen = Window(500,500) 
-  screen = Window((500,500))
-  screen = Window()
-  `
-
-## - update_all()
-updates all widgets, easier than calling `widget.update()` on every widget 
-
-## - curved_square(width, height, curve, color) => pygame.Surface
-this creates a rectangle with curved corners.
-
-width and height is the width and height of the rectangle
-
-curve is the curve amount, 0 is 0 curve and 1 is full curve, giving a value above 1 or below 0 will result in a ValueError
-
-color is the colour to draw it
-
-returns the shape on a pygame.Surface.
-
