@@ -1,7 +1,7 @@
 # PygameUI
 UI widgets for pygame
 
-Currently have [button](#--button), [textbox](#--textbox) and [checkbox](#--checkbox) and [other](--other Functions) functions
+Currently have [button](#--button), [textbox](#--textbox) and [checkbox](#--checkbox) and [other](#--other) functions
 
 # Other Functions
 
