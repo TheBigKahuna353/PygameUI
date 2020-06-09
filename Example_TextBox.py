@@ -45,7 +45,7 @@ while running:
     
     #draw and update our buttons and textbox
     InputBox.update()
-
+    InputBox2.update()
     
     
     

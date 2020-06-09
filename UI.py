@@ -306,7 +306,8 @@ class TextBox:
         self.font = pygame.font.Font(pygame.font.match_font(options['font']),
                                      options['font_size'])
         self.text_colour = options['text_colour']
-        self.text = [list(options['text'])]
+        self.text = [list(options['text'].split('\n'))]
+        self.wrapper()
         self.char_length = [self._get_text_width(x) for x in self.text]
         self.background = options['background']
         self.surface= options['surface'] if options['surface'] else pygame.display.get_surface()
@@ -345,7 +346,7 @@ class TextBox:
                     del self.text[self.current_line]
                     self.current_line -= 1
                     self.current_col = len(self.text[self.current_line])
-            else:   
+            else:
                 del self.text[self.current_line][-1]
                 self.current_col -= 1
         #if key is enter, create line
@@ -355,7 +356,6 @@ class TextBox:
             elif self.current_line < self.lines - 1:
                 self.current_line += 1
                 self.text.append([""])
-                self.char_length.append([0])
                 self.current_col = 0
         #if key is a charachter, put on screen
         elif e.unicode != "":
@@ -364,6 +364,9 @@ class TextBox:
                     del self.text[self.current_line][-1]
             self.text[self.current_line] = self.text[self.current_line][:self.current_col] + [e.unicode] + self.text[self.current_line][self.current_col:]
             self.current_col += 1
+            #wrapper
+            if self._get_text_width(self.text[self.current_line]) > self.w:
+                self.wrapper(True)
         #if the down arrow is pressed
         elif e.key == 274:
             self.current_line += 1 if self.current_line < len(self.text)-1 else 0
@@ -378,6 +381,22 @@ class TextBox:
         #if the left arrow is pressed
         elif e.key == 276:
             self.current_col -= 1 if 0 < self.current_col else 0
+    
+    def wrapper(self, change_cur = False):
+        for cur_line, line in enumerate(self.text):
+            for i in range(len(line)):
+                length = self._get_text_width(line[:i])
+                if length > self.w:
+                    indexs = [i for i, e in enumerate(self.text[cur_line]) if e == " "]
+                    if cur_line < self.lines - 1:
+                        if change_cur:
+                            self.current_line += 1
+                            self.current_col = len(self.text[cur_line]) - indexs[-1]
+                        if cur_line < len(self.text):
+                            self.text.append(self.text[cur_line][indexs[-1]+1:])
+                        else:
+                            self.text[cur_line + 1] = self.text[cur_line][indexs[-1]+1:] + self.text[cur_line]
+                        self.text[cur_line] = self.text[cur_line][:indexs[-1]]
     
     #draw the textbox
     def _draw(self):

@@ -16,21 +16,25 @@ InputBox = UI.TextBox(
     y = 100,
     w = 300,
     h = 30,
-    background=(200,200,200), 
-    lines = 2,
-    cursor = True
+    param_options={
+        'background':(200,200,200), 
+        'lines' : 2,
+        'cursor' : True
+    }
 )
 button1 = UI.Button(
     x = 100,
     y = 300,
     w = 10,
     h = 5,
-    calculateSize = True,
-    outline = UI.Outline(),
-    background = (200,200,200), 
-    action = button_clicked,
-    dont_generate = True,
-    curve_amount=0.5
+    param_options={
+        'calculateSize' : True,
+        'outline' : UI.Outline(),
+        'background' : (200,200,200), 
+        'action' : button_clicked,
+        'dont_generate' : True,
+        'curve_amount':0.5
+    }
 )
 
 #becuase we want to calculate the size of button1 without text or an image, we can use 'dont_generate = True'
@@ -45,11 +49,13 @@ button2 = UI.Button(
     y = 300,
     w = 120,
     h = 35,
-    curve_amount=0.3,
-    text = "Button2",
-    background = (200,200,200), 
-    hover_background_color = (240,240,240),
-    outline=UI.Outline("half",outline_color=(200,200,200))
+    param_options={
+        'curve_amount':0.3,
+        'text' : "Button2",
+        'background' : (200,200,200), 
+        'hover_background_color' : (240,240,240),
+        'outline':UI.Outline("half",outline_color=(200,200,200))
+    }
 )
 
 
@@ -62,16 +68,19 @@ hover_img = UI.curve_square(230,45,0.4,(0,0,200))
 button_img = UI.Button(
     x = 100,
     y = 100,
-    image = img,
-    enlarge = True, 
-    text = ""
+    param_options={
+        'image' : img,
+        'enlarge' : True, 
+    }
 )
 button_img2 = UI.Button(
     x = 350,
     y = 350,
-    image = img,
-    hover_image=hover_img,
-    text = "Button4"
+    param_options={
+        'image' : img,
+        'hover_image':hover_img,
+        'text' : "Button4"
+    }
 )
 
 
@@ -79,8 +88,10 @@ checkBox = UI.CheckBox(
     300,
     180,
     30, 
-    outline=UI.Outline(),
-    background=(200,200,200)
+    {
+        'outline':UI.Outline(),
+       ' background':(200,200,200)
+    }
 )
 
 
