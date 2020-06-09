@@ -5,33 +5,45 @@ Currently have [button](#--button), [textbox](#--textbox) and [checkbox](#--chec
 
 # - Button
 
-## Create a button with `UI.Button(x,y,[optional parameters])`
+## Create a button with `UI.Button(x,y,w,h,optional_parameters])`
 
-## All paramters are optional except x and y location
-
-
-### Arguments for `Button(x,y,w= 0,h=0,text="", calculateSize = False,background = (255,255,255),font = "Calibri", font_size = 30, text_colour = (0,0,0), outline = None,action = None, action_arg = None, surface = None, image = None, enlarge = False, enlarge_amount = 1.1)`
-
-
-- x - x location of the button
-- y - y location of the button
+- x - x location of button
+- y - y location of button
 - w = 0 - width of the button, if 0, width will be calculated off length of text(text argument must be supplied)
-- h=0 - height of the button, if 0, height will be calculated off height of text(text argument must be supplied)
-- text="" - the text of the button, if button is image, no text will be put on screen
-- calculateSize = False - when set to True, it will calculate the width and height, the width and height supplied as parameters will be added to calculated.
-- background = (255,255,255) - background color of the button, does not affect image
-- hover_background_color = None - this is the colour of the background when the mouse is over the button, by default it is the background supplied
-- font = "Calibri" - the font of the text
-- font_size = 30  - the font size of the text
-- font_colour = (0,0,0) - the color of the text
-- outline = None - Outline for the object, needs to be an `UI.Outline()` object
-- action = None - function that gets called when button clicked
-- action_arg = None - argument for action function
-- surface = None - surface the button gets blit to, if left as None, it will use the window surface
-- image = None - surface will be the button, using this means there can be no text, or outline
-- enlarge = False - When enlarge is set to True, it will enlarge the image when the mouse is over the button, only when image is supplied
-- enlarge_amount = 1.1 - the amount to enlarge by 
-- dont_generate = False - when set to True, it will not create the images, this is handy when you cant supply the text and want to calculate the width and height. 
+- h = 0 - height of the button, if 0, height will be calculated off height of text(text argument must be supplied)
+- optional_paramters - a dictionary of extra options for the button
+
+### optional paramters
+
+- text - the text of the button, if button is image, no text will be put on screen
+- calculate_size - when set to True, it will calculate the width and height, the width and height supplied as parameters will be added to calculated.
+- background - background color of the button, does not affect image
+- hover_background_color - this is the colour of the background when the mouse is over the button, by default it is the background supplied
+- font - the font of the text
+- font_size  - the font size of the text
+- font_colour - the color of the text
+- outline - when set to True, an outline will be created when the mouse is over the button
+- outline_half - this is the same as outline, but creates an outline for bottom and right side
+- outline_thickness - the thickness of the outline
+- outline_color - the color of the outline
+- on_click - this is a function that will gets called when the button is clicked
+- on_hover_enter - this is a function that gets called the first frame the mouse hovers over the button
+- on_hover_enter - this is a function that gets called once when the mouse leaves the button
+- on_hover - this is a function that gets called every frame the mouse is over the button
+- surface - surface the button gets blit to, if left as None, it will use the window surface
+- image - surface will be the button, using this means there can be no text, or outline
+- enlarge - When enlarge is set to True, it will enlarge the image when the mouse is over the button, only when image is supplied
+- enlarge_amount - the amount to enlarge by 
+- dont_generate - when set to True, it will not create the images, this is handy when you cant supply the text and want to calculate the width and height. 
+
+```
+def on_click(button):
+    print(button.text + " was clicked")
+
+button = UI.Button(100, 100, 100, 100,
+                   {'on_click': on_click}
+                   )
+```
 
 ## Methods for Button
 
@@ -48,28 +60,29 @@ This method returns a `pygame.Rect` object with the x, y, width and height of th
 
 # - TextBox
   
-## Create a Inputbox with `UI.TextBox(x, y, w, [optional parameters])`
+## Create a Inputbox with `UI.TextBox(x, y, w, h [optional parameters])`
 
 
-### arguments for `TextBox(self,x, y, w, h = 0,lines = 1, text = "", background = None, font_size = 30, font = "Calibri", text_colour = (0,0,0), surface = None, margin = 2, cursor = True,Enter_action = None, calculateSize = False)`
-
-all optional except x,y, width and height, it syas height it optional but if you want background, you need to supply height
 
 - x - x position of the textBox
 - y - y position of the textBox
 - w - width of the textbox
-- h = 0 - height of the textbox, when left as 0, it will use the font height, when calculateSize is True, this will be added to font height
-- lines = 1 - amount of lines the textbox has/can type in
-- text = "" - starting text for textbox
-- background = False - background color
-- font_size = 30 - font size of the text
-- font = "Calibri" - font of the text
-- text_colour = (0,0,0) - text color
-- surface = None - the surface to blit to, if None is supplied, it will blit to window
-- margin = 2 - the distance from when the letters start from the side of the textbox
-- cursor = True - show a cursor
-- Enter_action = None - a function that gets called when enter is pressed, no matter if there is more lines to write on
-- calculateSize = False - when calculateSize is True, the height will be calculated and the height supplied will be added on top
+- h - height of the textbox, when set to 0, it will use the font height, when calculateSize is True, this will be added to font height
+- optional parameters - a dictionary of extra options for the textbox
+
+### optional parameters
+
+- line - amount of lines the textbox has/can type in
+- text - starting text for textbox
+- background - background color
+- font_size - font size of the text
+- font - font of the text
+- text_colour - text color
+- surface - the surface to blit to, if None is supplied, it will blit to window
+- margin - the distance from when the letters start from the side of the textbox
+- cursor - show a cursor
+- Enter_action - a function that gets called when enter is pressed, no matter if there is more lines to write on
+- calculateSize - when calculateSize is True, the height will be calculated and the height supplied will be added on top
 
 ## methods for textbox
 
@@ -92,6 +105,7 @@ This method returns a `pygame.Rect` object with the x, y, width and height of th
 This method returns the text on a specific line or lines, by defualt, it returns all lines
 The parameter `lines`, it the line or lines you want, this can be an integer of the line or a tuple of 2 integers that are the start and end lines 
 e.g. 
+
     `get_lines()`, gets all lines  
     
      get_lines(lines = 2) gets 2nd line
@@ -104,15 +118,19 @@ The parameter `return_as_string` will return multiple lines as one string with `
 
 ## Create a CheckBox with `CheckBox(x, y, w, [optional parameters])`
 
-### arguments for `CheckBox(x,y,w,checked=False,background=(255,255,255),outline=None,surface=None,check_width = 2)`
+
 - x - the x position of the checkbox
 - y - the y position of the checkbox
 - w - the width and height of the checkbox
-- checked = False - this is if the checkbox is checked or not, False by default
-- background = (0,0,0) - this is the background colour of the checkbox, white by default
-- outline = None - this outlines the object, needs to be a `UI.Outline()` object
-- surface = None - this is the surface to draw the checkbox on, if left as None, uses Window surface
-- check_width = 2 - the thickness of the x when the checkbox is checked
+- optional parameters - a dictionary of extra options for the checkbox
+
+### optional paramters
+
+- checked - this is if the checkbox is checked or not, False by default
+- background - this is the background colour of the checkbox, white by default
+- outline - this outlines the object, needs to be a `UI.Outline()` object
+- surface - this is the surface to draw the checkbox on, if left as None, uses Window surface
+- check_width - the thickness of the x when the checkbox is checked
 
 ## methods for CheckBox
 
