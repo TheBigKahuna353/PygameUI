@@ -30,8 +30,9 @@ InputBox2 = UI.TextBox(
     h = 30,
     param_options = {
         'background' : (200,200,200), 
-        'lines' : 1,
-        'cursor' : True
+        'lines' : 3,
+        'cursor' : False,
+        'text': 'this is a bunch of text to put on the textbox to see if it will wrap'
     }
 )
 
@@ -56,3 +57,4 @@ while running:
         elif e.type == pygame.KEYDOWN:  #if a key is pressed, update the Textbox
             InputBox.key_down(e) #supply the event to the Textbox
             print(InputBox.get_lines()) #print what is on the Inputbox
+            print(InputBox.current_col)

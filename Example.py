@@ -28,12 +28,13 @@ button1 = UI.Button(
     w = 10,
     h = 5,
     param_options={
-        'calculateSize' : True,
-        'outline' : UI.Outline(),
-        'background' : (200,200,200), 
-        'action' : button_clicked,
+        'calculate_size' : True,
+        'outline' : True,
+        'background_color' : (200,200,200), 
+        'on_click' : button_clicked,
         'dont_generate' : True,
-        'curve_amount':0.5
+        'curve':0.5,
+        'center': True
     }
 )
 
@@ -50,11 +51,11 @@ button2 = UI.Button(
     w = 120,
     h = 35,
     param_options={
-        'curve_amount':0.3,
+        'curve':0.3,
         'text' : "Button2",
-        'background' : (200,200,200), 
+        'background_color' : (200,200,200), 
         'hover_background_color' : (240,240,240),
-        'outline':UI.Outline("half",outline_color=(200,200,200))
+        'outline_half': True
     }
 )
 
@@ -89,8 +90,8 @@ checkBox = UI.CheckBox(
     180,
     30, 
     {
-        'outline':UI.Outline(),
-       ' background':(200,200,200)
+        'outline':True,
+       ' background_color':(200,200,200)
     }
 )
 

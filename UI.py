@@ -67,8 +67,14 @@ class Button:
             'curve': 0,
             'padding_x':0,
             'padding_y':0,
-            'text':""
+            'text':"",
+            'center': False
         }
+        
+        for key, value in param_options.items():
+            if key not in options:
+                raise KeyError(key + " is not an option, is it spelt correctly")
+        
         options.update(param_options)
     
         self.padding_x = options['padding_x']
@@ -97,6 +103,7 @@ class Button:
         self.enlarge = options['enlarge']
         self.enlarge_amount = options['enlarge_amount']   
         self.text = options['text']
+        self.center = options['center']
     
         # if no surface is supplied, try getting main screen
         if self.surface is None:
@@ -266,13 +273,18 @@ class Button:
     
     #draw the button
     def _draw(self):
+        x = self.x
+        y = self.y
+        if self.center:
+            x -= self.w//2
+            y -= self.h//2
         if self.hover:
             if self.enlarge:
-                self.surface.blit(self.hover_image,(self.x - self.dx//2,self.y - self.dy//2))
+                self.surface.blit(self.hover_image,(x - self.dx//2,y - self.dy//2))
             else:
-                self.surface.blit(self.hover_image,(self.x,self.y))
+                self.surface.blit(self.hover_image,(x,y))
         else:
-            self.surface.blit(self.image,(self.x,self.y))
+            self.surface.blit(self.image,(x,y))
 
 
 
@@ -306,7 +318,7 @@ class TextBox:
         self.font = pygame.font.Font(pygame.font.match_font(options['font']),
                                      options['font_size'])
         self.text_colour = options['text_colour']
-        self.text = [list(options['text'].split('\n'))]
+        self.text = list(options['text'].split('\n'))
         self.wrapper()
         self.char_length = [self._get_text_width(x) for x in self.text]
         self.background = options['background']
@@ -347,7 +359,7 @@ class TextBox:
                     self.current_line -= 1
                     self.current_col = len(self.text[self.current_line])
             else:
-                del self.text[self.current_line][-1]
+                self.text[self.current_line] = self.text[self.current_line][:self.current_col-1] + self.text[self.current_line][self.current_col+1:]
                 self.current_col -= 1
         #if key is enter, create line
         elif e.key == 13:
@@ -355,14 +367,14 @@ class TextBox:
                 self.Enter_action()
             elif self.current_line < self.lines - 1:
                 self.current_line += 1
-                self.text.append([""])
+                self.text.append("")
                 self.current_col = 0
         #if key is a charachter, put on screen
         elif e.unicode != "":
             if len(self.text[self.current_line]) > 0:
                 if self.text[self.current_line][-1] == "":
                     del self.text[self.current_line][-1]
-            self.text[self.current_line] = self.text[self.current_line][:self.current_col] + [e.unicode] + self.text[self.current_line][self.current_col:]
+            self.text[self.current_line] = self.text[self.current_line][:self.current_col] + e.unicode + self.text[self.current_line][self.current_col:]
             self.current_col += 1
             #wrapper
             if self._get_text_width(self.text[self.current_line]) > self.w:
@@ -384,19 +396,22 @@ class TextBox:
     
     def wrapper(self, change_cur = False):
         for cur_line, line in enumerate(self.text):
-            for i in range(len(line)):
-                length = self._get_text_width(line[:i])
+            for i in range(len(''.join(line))):
+                length = self._get_text_width(''.join(line[:i]))
                 if length > self.w:
-                    indexs = [i for i, e in enumerate(self.text[cur_line]) if e == " "]
+                    indexs = [i for i, e in enumerate(self.text[cur_line][:i]) if e == " "]
                     if cur_line < self.lines - 1:
+                        if len(indexs) == 0:
+                            indexs.append(i-1)
                         if change_cur:
                             self.current_line += 1
-                            self.current_col = len(self.text[cur_line]) - indexs[-1]
+                            self.current_col = len(self.text[cur_line]) - indexs[-1] - 1
                         if cur_line < len(self.text):
                             self.text.append(self.text[cur_line][indexs[-1]+1:])
                         else:
                             self.text[cur_line + 1] = self.text[cur_line][indexs[-1]+1:] + self.text[cur_line]
                         self.text[cur_line] = self.text[cur_line][:indexs[-1]]
+                        break
     
     #draw the textbox
     def _draw(self):
@@ -406,7 +421,7 @@ class TextBox:
         #draw all text
         for line,text in enumerate(self.text):
             if len(text) != 0:
-                txt = "".join(text)
+                txt = text
                 obj = self.font.render(txt,True,self.text_colour)
                 self.surface.blit(obj,(self.x + self.margin,self.y +(self.h*line)))
         #draw cursor
@@ -460,8 +475,11 @@ class CheckBox:
         
         options = {
             'checked' : False,
-            'background' : (255,255,255),
-            'outline' : None,
+            'background_color' : (255,255,255),
+            'outline' : False,
+            'outline_amount': 2,
+            'outline_color': (0,0,0),
+            'outline_half': False,
             'surface' : None,
             'check_width' : 2
         }
@@ -471,7 +489,10 @@ class CheckBox:
         _all_widgets.append(self)
         self.checked = options['checked']
         self.backgound = options['background']
-        self.out = options['outline']
+        self.outline = options['outline']
+        self.out_amount = options['outline_amount']
+        self.out_col = options['outline_color']
+        self.out_half = options['outline_half']
         self._prev_click = False
         self.surface = options['surface'] if options['surface'] else pygame.display.get_surface()
         self.check_width = options['check_width']
@@ -509,9 +530,11 @@ class CheckBox:
     #draw the checkbox
     def _draw(self):
         #if outline
-        if self.out:
-            pygame.draw.rect(self.surface,(0,0,0),(self.x,self.y,self.w,self.w))
-            pygame.draw.rect(self.surface,self.backgound,(self.x + self.out.s,self.y + self.out.s,self.w - self.out.s*2,self.w - self.out.s*2))
+        if self.outline:
+            pygame.draw.rect(self.surface,self.out_col,(self.x,self.y,self.w,self.w))
+            pygame.draw.rect(self.surface,self.backgound,
+                             (self.x + self.out_amount,self.y + self.out_amount,
+                              self.w - self.out_amount*2,self.w - self.out_amount*2))
         else:
             pygame.draw.rect(self.surface,self.backgound,(self.x,self.y,self.w,self.w))
         #if checked
