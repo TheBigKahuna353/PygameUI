@@ -42,6 +42,8 @@ class Button:
         self.y = y
         self.w = w
         self.h = h
+        self.x_offset = 0
+        self.y_offset = 0
         _all_widgets.append(self)
         options = {
             'surface': None,
@@ -220,6 +222,11 @@ class Button:
             self._caclulate_size()
         self._Generate_images()
     
+    def Scroll(self, x=0, y=0):
+        if x != 0:
+            self.x_offset = x
+        if y != 0:
+            self.y_offset = y
     
     #update the button, this should get called every frame
     def update(self):
@@ -228,8 +235,8 @@ class Button:
         self.hover = False
         returnee = False
         #check if mouse over button
-        if mouse_pos[0] > self.x and mouse_pos[0] < self.x + self.w:
-            if mouse_pos[1] > self.y and mouse_pos[1] < self.y + self.h:
+        if mouse_pos[0] > self.x + self.x_offset and mouse_pos[0] < self.x + self.w + self.x_offset:
+            if mouse_pos[1] > self.y + self.y_offset and mouse_pos[1] < self.y + self.y_offset + self.h:
                 if self.hover == False:
                     if self.on_hover_enter:
                         self.on_hover_enter(self)
@@ -270,11 +277,10 @@ class Button:
         self.clicked = returnee
         return returnee
     
-    
     #draw the button
     def _draw(self):
-        x = self.x
-        y = self.y
+        x = self.x + self.x_offset
+        y = self.y + self.y_offset
         if self.center:
             x -= self.w//2
             y -= self.h//2
@@ -305,6 +311,9 @@ class TextBox:
             'Enter_action' : None, 
             'calculateSize' : False
         }
+        for key, value in param_options.items():
+            if key not in options:
+                raise KeyError(key + " is not an option, is it spelt correctly")        
         options.update(param_options)
         self.x = x
         self.y = y
@@ -484,11 +493,14 @@ class CheckBox:
             'check_width' : 2
         }
         
+        for key, value in param_options.items():
+            if key not in options:
+                raise KeyError(key + " is not an option, is it spelt correctly")        
         options.update(param_options)
         
         _all_widgets.append(self)
         self.checked = options['checked']
-        self.backgound = options['background']
+        self.backgound = options['background_color']
         self.outline = options['outline']
         self.out_amount = options['outline_amount']
         self.out_col = options['outline_color']
@@ -533,16 +545,261 @@ class CheckBox:
         if self.outline:
             pygame.draw.rect(self.surface,self.out_col,(self.x,self.y,self.w,self.w))
             pygame.draw.rect(self.surface,self.backgound,
-                             (self.x + self.out_amount,self.y + self.out_amount,
-                              self.w - self.out_amount*2,self.w - self.out_amount*2))
+                             (self.x + self.out_amount, self.y + self.out_amount,
+                              self.w - self.out_amount*2, self.w - self.out_amount*2))
         else:
             pygame.draw.rect(self.surface,self.backgound,(self.x,self.y,self.w,self.w))
         #if checked
         if self.checked:
-            pygame.draw.line(self.surface,(0,0,0),(self.x,self.y), (self.x + self.w,self.y + self.w),self.check_width)
-            pygame.draw.line(self.surface,(0,0,0),(self.x,self.y + self.w), (self.x + self.w,self.y),self.check_width)
-        
+            pygame.draw.line(self.surface,(0, 0, 0),
+                             (self.x, self.y), (self.x + self.w, self.y + self.w),self.check_width)
+            pygame.draw.line(self.surface,(0, 0, 0),
+                             (self.x, self.y + self.w), (self.x + self.w, self.y),self.check_width)
 
+#scroll widget
 class Scroll:
-    def __init__(self,surface = None):
-        pass
+    def __init__(self, param_options = {}):
+        options = {'starting_x': 0,
+                   'starting_y': 0,
+                   'range_x': 0,
+                   'range_y': 0,
+                   'bar_color': (200, 200, 200),
+                   'slider_color': (150, 150, 150)}
+        for key, value in param_options.items():
+            if key not in options:
+                raise KeyError(key + " is not an option, is it spelt correctly")        
+        options.update(param_options)
+
+        screen_size = pygame.display.get_surface().get_size()
+        self.w, self.h = screen_size
+        #create sliders for x and y axis
+        if options['range_x'] != 0:
+            self.x_slider = Slider(0, self.h - 20, self.w - 20, 20,
+                                   {'starting_value': options['starting_x'],
+                                    'value_range': [0, options['range_x']],
+                                    'slider_color': options['slider_color'],
+                                    'background_color': options['bar_color'],
+                                    })
+        else:
+            self.x_slider = None
+        if options['range_y']:
+            self.y_slider = Slider(self.w - 20, 0, 20, self.h - 20,
+                              {'starting_value': options['starting_y'],
+                               'value_range': [0, options['range_y']],
+                               'slider_color': options['slider_color'],
+                               'background_color': options['bar_color'],
+                               'direction': 'vertical'
+                               })
+        else:
+            self.y_slider = None
+
+    #this is updates the sliders, this should be called every frame
+    def update(self):
+        if self.x_slider is not None:
+            self.x_slider.update()
+        if self.y_slider is not None:
+            self.y_slider.update()
+    
+    #returns the scroll amount given an index e.g. 'scrollx = scroll[0]'
+    def __getitem__(self, index):
+        if index == 0:
+            if self.x_slider is not None:
+                return -self.x_slider.value()
+            return 0
+        elif index == 1:
+            if self.y_slider is not None:
+                return -self.y_slider.value()
+            return 0
+        return (-self.x_slider.value() if self.x_slider is not None else 0,
+                -self.y_slider.value() if self.y_slider is not None else 0)
+
+#a slider widget
+class Slider:
+    def __init__(self, x, y, w, h, params):
+        options = {
+            "background_color": (100, 100, 100),
+            "slider_width": None,
+            "slider_color": (200, 200, 200),
+            "starting_value": None,
+            "value_range": [0, 1],
+            "slider_height": None,
+            "step": 0,
+            "image": None,
+            'direction': 'horizontal',
+            'resize_slider': False,
+            'curve': 0
+        }
+        for key, val in params.items():
+            if key not in options:
+                raise TypeError(key + " is not an option, have you spelt it correctly")
+
+        options.update(params)
+
+        self.x = x
+        self.y = y
+        self.w = w
+        self.h = h
+        self.direction = options['direction']
+        if self.direction not in ['horizontal', 'vertical']:
+            raise ValueError('option \'direction\' is not a direction, (%d)' % (self.direction))
+        self.bg = options["background_color"]
+        #if the user gives an image for slider background, use that instead of drawing one
+        if options["image"] is not None:
+            self.image = pygame.Surface((self.w, self.h))
+            self.image.blit(options["image"], (0, 0))
+        else:
+            self.image = None
+        self.val_range = options["value_range"]
+        self.curve = options['curve']
+        self.resize = options['resize_slider']
+        val_dif = self.val_range[1] - self.val_range[0]
+        self.slider_bg = options["slider_color"]
+        self.slider_h = options["slider_height"]
+        if self.slider_h is None:
+            if self.direction == 'horizontal':
+                self.slider_h = h
+            else:
+                self.slider_h = w
+        self.step = options["step"]
+        if self.direction == 'horizontal':
+            self.slider_w = (
+                options["slider_width"] if options["slider_width"] is not None else h
+            )
+        else:
+            self.slider_w = (
+                options["slider_width"] if options["slider_width"] is not None else w
+            )            
+        if options["starting_value"] is not None:
+            self.val = constrain(
+                options["starting_value"], self.val_range[0], self.val_range[1], 0, 1
+            )
+        else:
+            self.val = 0.5
+        if self.resize:
+            range_ = self.val_range[1] - self.val_range[0]
+            if self.direction == 'horizontal':
+                if range_ < self.w:
+                    self.slider_w = self.w - range_
+            else:
+                if range_ < self.h:
+                    self.slider_h = self.h - range_                    
+        self.screen = pygame.display.get_surface()
+        if self.direction == 'horizontal':
+            self.slider_rect = pygame.Rect(
+                self.x + self.val * (self.w - self.slider_w),
+                self.y + (self.h - self.slider_h) // 2,
+                self.slider_w,
+                self.slider_h,
+            )
+        else:
+            self.slider_rect = pygame.Rect(
+                self.x + (self.w - self.slider_w) // 2,
+                self.y + self.val * (self.h - self.slider_h),
+                self.slider_w,
+                self.slider_h,
+            )
+        self.clicked_on = False
+        self.prev_click = False
+
+    #draw the slider
+    def _draw(self):
+        if self.image is not None:
+            self.screen.blit(self.image, (self.x, self.y))
+        elif self.curve == 0:
+            pygame.draw.rect(
+                self.screen, self.bg, (self.x, self.y, self.w, self.h)
+            )
+        else:
+            self.screen.blit(curve_square(self.w, self.h, self.curve, self.bg),
+                             (self.x, self.y))
+        if self.curve == 0:
+            pygame.draw.rect(self.screen, self.slider_bg, self.slider_rect)
+        else:
+            self.screen.blit(curve_square(self.slider_w, self.slider_h,
+                                          self.curve, self.slider_bg), self.slider_rect)
+
+    #updates the slider, this should be called every frame
+    def update(self):
+        mouse_pos = pygame.mouse.get_pos()
+        click = pygame.mouse.get_pressed()[0]
+        if self.slider_rect.collidepoint(mouse_pos):
+            # check for click, if held down, action only gets called once
+            if click and not self.prev_click:
+                self.clicked_on = True
+        if self.clicked_on:
+            if self.direction == 'horizontal':
+                self.val = (mouse_pos[0] - self.x) / self.w
+                self.val = max(min(self.val, 1), 0)
+                self.val = self._get_val(self.val)
+                self.slider_rect.x = self.x + self.val * (self.w - self.slider_w)
+            else:
+                self.val = (mouse_pos[1] - self.y) / self.h
+                self.val = max(min(self.val, 1), 0)
+                self.val = self._get_val(self.val)
+                self.slider_rect.y = self.y + self.val * (self.h - self.slider_h)
+        if not click:
+            self.clicked_on = False   
+        self.prev_click = click
+        self._draw()
+
+    def Move(self, x = 0, y = 0, dx = 0, dy = 0):
+        self.x = x if x != 0 else self.x
+        self.y = y if y != 0 else self.y
+        self.x += dx
+        self.y += dy
+        if self.direction == 'horizontal':
+            self.slider_rect = pygame.Rect(
+                self.x + self.val * (self.w - self.slider_w),
+                self.y + (self.h - self.slider_h) // 2,
+                self.slider_w,
+                self.slider_h,
+            )
+        else:
+            self.slider_rect = pygame.Rect(
+                self.x + (self.w - self.slider_w) // 2,
+                self.y + self.val * (self.h - self.slider_h),
+                self.slider_w,
+                self.slider_h,
+            )
+
+    #returns the value the slider is at
+    def value(self):
+        val = constrain(self.val, 0, 1, self.val_range[0], self.val_range[1])
+        if isinstance(self.step, int) and self.step != 0:
+            val = int(val)
+        return val
+
+    #sets the value of the slider, moveing the slider object to that position
+    def set_value(self, val):
+        self.val = constrain(val, self.val_range[0], self.val_range[1], 0, 1)
+        self.slider_rect.x = self.x + self.val * (self.w - self.slider_w)
+
+    #if the slider has a step and is not contineous, round to nearest step size
+    def _get_val(self, val):
+        if self.step == 0:
+            return val
+        else:
+            a = constrain(val, 0, 1, self.val_range[0], self.val_range[1])
+            b = round_to(a, self.step)
+            c = constrain(b, self.val_range[0], self.val_range[1], 0, 1)
+            # print(val, a, b, c)
+            return c
+
+#transform a value from one range to another
+def constrain(val, start, end, realstart, realend):
+    # mouseX 0 width 0 255
+    # v = (mouseX / (end-start)) * (realend-realstart)
+    # return realstart + v
+    # if val < start, val = start
+    # if val > end, val = end
+
+    if val < start:
+        return start
+    if val > end:
+        return end
+    v = ((val - start) / (end - start)) * (realend - realstart)
+    return realstart + v
+
+#this returns the number rounded to a base number
+def round_to_num(x, base=1):
+    return base * round(x / base)

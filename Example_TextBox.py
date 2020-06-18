@@ -57,4 +57,4 @@ while running:
         elif e.type == pygame.KEYDOWN:  #if a key is pressed, update the Textbox
             InputBox.key_down(e) #supply the event to the Textbox
             print(InputBox.get_lines()) #print what is on the Inputbox
-            print(InputBox.current_col)
+
