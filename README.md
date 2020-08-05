@@ -172,5 +172,52 @@ e.g. `print(Checkbox.checked)
 
      if CheckBox:
      
-         print("The checkbox is checked")
+         print("The checkbox is checked"
 `
+
+# - Scroller
+
+## Create a Scroller with `Scroll([optional parameters])`
+
+### optional paramters
+
+- starting_x - the start position of the horizontal slider
+- starting_y - the start position of the vertical slider
+- range_x - the amount of pixels to scroll by, the amount of extra pixels you want
+- range_y - the amount of pixels to scroll by, the amount of extra pixels you want
+- bar_color - the background color of the slider/ bar
+- slider_color - the color of the slider
+
+## to use the scroller
+
+you can get the value of the scroll by using `scroll[0]` for horizontal and `scroll[1]` for vertical value
+
+e.g.
+```
+pygame.draw.rect(screen, color, (x + scroll[0], y + scroll[1], 100, 100))
+#this draws a rectangle and moves with the slider
+```
+
+# Slider
+
+## create a slider with `Slider(x, y, w, h, [optional parameters])`
+
+- x - the x position of the slider
+- y - the y position of the slider
+- w - the width of the slider
+- h - the height of the slider
+- optional paramters - a dictionary of extra options
+
+### Optional paramters
+
+- background_color - the background color of the slider/ bar
+- slider_width - the width of the slider, no matter which direction, this is the horizontal size
+- slider_height - the height of the slider, not matter which direction, this is the vertical size
+- slider_color - the color of the slider
+- starting_value - the starting value of the slider
+- step - the amount the slider increments by, if left as 0, the slider will increment by the smallest amount to appear smooth
+- value_range - the range of the slider, given as a list of the min and max, the slider will return its value between this range
+- image - this will replace the background, the slider will go on top of the image
+- direction - this can be 'horizontal' or 'vertical'
+- resize_slider - When set to True, it will adjust the size of slider in porpotiion to the range
+- curve - this is the amount of curve the shape of the slider
