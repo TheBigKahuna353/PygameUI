@@ -167,7 +167,7 @@ class Button:
         #if the user gives an image, create the image when the mouse hovers over
         elif self.hover_image == None:
             self.hover_image = self.image.copy()
-            if not self.outline is None:
+            if self.outline:
                 pygame.draw.rect(self.hover_image,(0, 0, 0, 255), (0, 0, self.w, self.outline_amount))
                 pygame.draw.rect(self.hover_image,(0, 0, 0, 255), (0 ,0 ,self.outline_amount, self.h))
                 pygame.draw.rect(self.hover_image,(0, 0, 0, 255), (self.w, self.h, -self.w, -self.outline_amount))
