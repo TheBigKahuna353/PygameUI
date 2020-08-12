@@ -4,10 +4,10 @@ import UI
 
 #setup pygame
 pygame.init()
-screen = UI.Window(500,400) #creates a window 500x400
+screen = UI.Window(500,500) #creates a window 500x500
 
 #this function will run when button1 is clicked
-def button_clicked():
+def button_clicked(btn):
     print("button clicked")
 
 #create our textBoxes and Buttons
@@ -51,19 +51,19 @@ button2 = UI.Button(
     w = 120,
     h = 35,
     param_options={
-        'curve':0.3,
+        'curve': 0.3,
         'text' : "Button2",
-        'background_color' : (200,200,200), 
-        'hover_background_color' : (240,240,240),
-        'outline_half': True
+        'background_color' : (200, 200, 200), 
+        'hover_background_color' : (240, 240, 240),
+        'outline_half': False
     }
 )
 
 
 #create an image for our button
 #img = UI.curve_square(120,35,0.4,(200,200,200))
-img = pygame.Surface((100,100),pygame.SRCALPHA)
-hover_img = UI.curve_square(230,45,0.4,(0,0,200))
+img = pygame.Surface((100, 50), pygame.SRCALPHA)
+hover_img = UI.curve_square(110, 60, 0.4, (0 ,0 ,200))
 
 #create our button using our image
 button_img = UI.Button(
@@ -75,7 +75,7 @@ button_img = UI.Button(
     }
 )
 button_img2 = UI.Button(
-    x = 350,
+    x = 250,
     y = 350,
     param_options={
         'image' : img,
@@ -91,12 +91,9 @@ checkBox = UI.CheckBox(
     30, 
     {
         'outline':True,
-       ' background_color':(200,200,200)
+        'background_color': (200, 200, 200)
     }
 )
-
-
-
 
 running = True
 # Game Loop

@@ -167,7 +167,7 @@ class Button:
         #if the user gives an image, create the image when the mouse hovers over
         elif self.hover_image == None:
             self.hover_image = self.image.copy()
-            if self.outline:
+            if not self.outline is None:
                 pygame.draw.rect(self.hover_image,(0, 0, 0, 255), (0, 0, self.w, self.outline_amount))
                 pygame.draw.rect(self.hover_image,(0, 0, 0, 255), (0 ,0 ,self.outline_amount, self.h))
                 pygame.draw.rect(self.hover_image,(0, 0, 0, 255), (self.w, self.h, -self.w, -self.outline_amount))
@@ -308,8 +308,11 @@ class TextBox:
             'surface' : None, 
             'margin' : 2, 
             'cursor' : True,
-            'Enter_action' : None, 
-            'calculateSize' : False
+            'on_enter' : None, 
+            'calculateSize' : False,
+            'selectable' : False,
+            'selected': True,
+            'variable_size': False
         }
         for key, value in param_options.items():
             if key not in options:
@@ -329,20 +332,19 @@ class TextBox:
         self.text_colour = options['text_colour']
         self.text = list(options['text'].split('\n'))
         self.wrapper()
-        self.char_length = [self._get_text_width(x) for x in self.text]
         self.background = options['background']
         self.surface= options['surface'] if options['surface'] else pygame.display.get_surface()
         self.margin = options['margin']
-        self.Enter_action = options['Enter_action']        
-        if self.surface == None:
-            raise ValueError("No surface to blit to")        
+        self.Enter_action = options['on_enter']   
+        self.var_size = options['variable_size'] 
         #if no surface is supplied, get window
         if self.surface == None:
-            self.surface = pygame.display.get_surface()
-            if self.surface == None:
-                raise ValueError("No surface to blit to")
+            raise ValueError("No surface to blit to") 
         if options['calculateSize'] or self.h == 0:
             self.h = self._get_font_height() + h
+        self.selectable = options['selectable']
+        self.selected = options['selected'] if self.selectable else True
+        self.prev_clicked = False
     
     #get the width of the text using the font
     def _get_text_width(self,text):
@@ -351,7 +353,7 @@ class TextBox:
             return 0
         obj = self.font.render(text,True,(0,0,0))
         return obj.get_width()
-    
+
     #returns the height of the font
     def _get_font_height(self):
         obj = self.font.render(" ",True,(0,0,0))
@@ -359,6 +361,8 @@ class TextBox:
     
     #call this when the user presses a key down, supply the event from `pygame.event.get()`
     def key_down(self,e):
+        if not self.selected:
+            return
         #when backspace is pressed, delete last char
         if e.unicode == "":
             #if nothing in line, delete line
@@ -403,6 +407,7 @@ class TextBox:
         elif e.key == 276:
             self.current_col -= 1 if 0 < self.current_col else 0
     
+    # if text goes out of textbox, wrap it to next line
     def wrapper(self, change_cur = False):
         for cur_line, line in enumerate(self.text):
             for i in range(len(''.join(line))):
@@ -434,17 +439,32 @@ class TextBox:
                 obj = self.font.render(txt,True,self.text_colour)
                 self.surface.blit(obj,(self.x + self.margin,self.y +(self.h*line)))
         #draw cursor
-        if self.cursor:
-            total = 0
-            total = self._get_text_width(self.text[self.current_line][:self.current_col])
-            pygame.draw.line(self.surface,(0,0,0),(self.x + total,self.y +(self.h*self.current_line)),
-                                     (self.x + total,self.y + (self.h*(self.current_line+1))),2)
-            #print(self.current_col)
+        if self.selected:
+            if self.cursor:
+                total = 0
+                total = self._get_text_width(self.text[self.current_line][:self.current_col])
+                pygame.draw.line(self.surface,(0,0,0),(self.x + total,self.y +(self.h*self.current_line)),
+                                        (self.x + total,self.y + (self.h*(self.current_line+1))),2)
+                #print(self.current_col)
     
     #update should be called every frame, it draws the textbox
     def update(self):
+        if self.selectable:
+            mx, my = pygame.mouse.get_pos()
+            click = pygame.mouse.get_pressed()[0]
+            clicked_on = False
+            if mx > self.x and mx < self.x + self.w and my > self.y and my < self.y + self.h:
+                if click:
+                    if not self.prev_clicked:
+                        self.selected = not self.selected
+                        clicked_on = True
+                        print("now selected" if self.selected else "not selected", self.text)
+            if not clicked_on:
+                if click:
+                    if not self.prev_clicked:
+                        self.selected = False
+            self.prev_clicked = click
         self._draw()
-    
     
     #get the text of a specific line or lines
     def get_lines(self, lines= -1,return_as_string = False):
