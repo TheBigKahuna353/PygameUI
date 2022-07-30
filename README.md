@@ -1,3 +1,7 @@
+# This is being updated on hooman
+this has been included in the [https://github.com/Abdur-rahmaanJ/hooman](hooman) library and is currently being maintained
+
+
 # PygameUI
 UI widgets for pygame
 
